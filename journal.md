@@ -27,10 +27,14 @@ And, it uses them to shrink both the first latent state and the data:
 
 I've run experiments using both v1 and v2. For both, I've tried with:
 * Dirichlet versus gamma priors over the factor matrix in the Poisson likelihood
-* eps=0 versus eps=1 for the Poisson-randomized gamma prior over \theta_tk
+* eps=0 versus eps=1 for the Poisson-randomized gamma prior over theta_tk
 
 And, for v2 I've additionally tried with:
-* eps=0 versus eps=1 for the prior over \nu_k
+* eps=0 versus eps=1 for the prior over nu_k
 
-The main takeaway I'm seeing now:
+Results observations:
+* The forecasting performance is **terrible** when using gamma priors over the factor matrix; this is especially true for v2.
+* The Dirichlet models for v2 are generally doing the best.
+
+We want to show that developing this whole model class was worth it. One of the main sells is that using Poisson-randomized dynamics yields a richer model class---i.e., one that allows for gamma priors over factors in the Poisson likelihood. However, remember, we can make this point for **just the gamma priors over \lambda_k**
 
