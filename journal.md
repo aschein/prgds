@@ -8,11 +8,21 @@ PrGDS-v1 (version 1) uses shrinkage weights drawn from the usual gamma process:
 
   And, it only uses them to shrink the first time step of latent Poisson states:
   
-      h1_k ~ Pois(nu_k)
+      h_1k ~ Pois(nu_k ...)
 
   Meanwhile, the data is shrunk using a completely different set of weights:
   
-      y_k ~ Pois(lambda_k ...)
+      y_tk ~ Pois(lambda_k ...)
 
- 
-  
+PrGDS-v2 (version 2) uses shrinkage weights drawn from a Poisson-randomized gamma process:
+      
+      gamma_0, beta ~ Gam(...)
+      g_k ~ Pois(gamma_0 / K)
+      nu_k ~ Gam(eps + g_k, beta)
+
+And, it uses them to shrink both the first latent state and the data:
+
+    h_1k ~ Pois(nu_k ...)
+    y_tk ~ Pois(lambda_k ...)
+
+If run experiments using both v1 and v2. For both, I've tried with both Dirichlet and gamma priors over the factor matrices in the Poisson likelihood and with eps=0 and eps=1 for the prior over $\theta$ 
