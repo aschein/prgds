@@ -35,6 +35,6 @@ And, for v2 I've additionally tried with:
 Results observations:
 * The forecasting performance is **terrible** when using gamma priors over the factor matrix; this is especially true for v2.
 * The Dirichlet models for v2 are generally doing the best.
+* None of the nu_k=0 for the eps=0 version of v2. This is disappointing. We were hoping that some components would be shut off (like actually *shut off*).
 
-We want to show that developing this whole model class was worth it. One of the main sells is that using Poisson-randomized dynamics yields a richer model class---i.e., one that allows for gamma priors over factors in the Poisson likelihood. However, remember, we can make this point for **just the gamma priors over \lambda_k**
-
+We want to show that developing this whole model class was worth it. One of the main sells is that using Poisson-randomized dynamics yields a richer model class---i.e., one that allows for gamma priors over factors in the Poisson likelihood. However, remember, we can make this point for **just the gamma priors over lambda_k** (PGDS cannot incorporate those and must shrink with a complicated prior over the transition matrix). Let's just stop testing with gamma priors over the factor matrix since that version does terribly and is not necessary to showoff this new model class. 
