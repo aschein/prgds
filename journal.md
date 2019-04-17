@@ -11,5 +11,5 @@ PrGDS-v1 (version 1) uses shrinkage weights drawn from the usual gamma process:
   Meanwhile, the data is shrunk using a completely different set of weights:
       y_k ~ Pois(lambda_k ...)
 
-
+ 
   
