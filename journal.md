@@ -25,4 +25,12 @@ And, it uses them to shrink both the first latent state and the data:
     h_1k ~ Pois(nu_k ...)
     y_tk ~ Pois(lambda_k ...)
 
-If run experiments using both v1 and v2. For both, I've tried with both Dirichlet and gamma priors over the factor matrices in the Poisson likelihood and with eps=0 and eps=1 for the prior over $\theta$ 
+I've run experiments using both v1 and v2. For both, I've tried with:
+* Dirichlet versus gamma priors over the factor matrix in the Poisson likelihood
+* eps=0 versus eps=1 for the Poisson-randomized gamma prior over \theta_tk
+
+And, for v2 I've additionally tried with:
+* eps=0 versus eps=1 for the prior over \nu_k
+
+The main takeaway I'm seeing now:
+
