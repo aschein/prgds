@@ -1,4 +1,5 @@
 *4/28/19*
+
 It looks like the Dirichlet versions of PrGDS-v3 perform terribly and that is due to them inferring very large values for nu_k and very, very small values for tau. 
 
 The gamma version of PrGDS-v3 are performing very well; they infer reasonable values for both nu_k and tau.
