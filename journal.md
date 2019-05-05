@@ -1,4 +1,5 @@
 *5/5/19*
+
 Mystery solved. You need to schedule nu_K to start updating a couple iterations after everything else so that delta_T and Theta_TK can take over the job of explaining the (large) scale of the data. The class mcmc_model requires that state variables are listed in topological order; thus without any schedule, nu_K is one of the first variables sampled. Since we initialize delta_T/Theta_TK to very small values, the first iteration of sampling nu_K leads them to be very, very large. Then delta_T/tau/etc. are forced to take small values; the Gibbs sampler then gets stuck in this regime.
 
 *4/28/19*
