@@ -1,0 +1,50 @@
+*5/5/19*
+
+Mystery solved. You need to schedule nu_K to start updating a couple iterations after everything else so that delta_T and Theta_TK can take over the job of explaining the (large) scale of the data. The class mcmc_model requires that state variables are listed in topological order; thus without any schedule, nu_K is one of the first variables sampled. Since we initialize delta_T/Theta_TK to very small values, the first iteration of sampling nu_K leads them to be very, very large. Then delta_T/tau/etc. are forced to take small values; the Gibbs sampler then gets stuck in this regime.
+
+*4/28/19*
+
+It looks like the Dirichlet versions of PrGDS-v3 perform terribly and that is due to them inferring very large values for nu_k and very, very small values for tau. 
+
+The gamma version of PrGDS-v3 are performing very well; they infer reasonable values for both nu_k and tau.
+
+*4/17/19*
+
+Thinking about results. I've run the matrix experiments using a bunch of different variants of PrGDS:
+
+PrGDS-v1 (version 1) uses shrinkage weights drawn from the usual gamma process:
+ 
+      nu_k ~ Gam(gamma_0 / K, beta)
+
+  And, it only uses them to shrink the first time step of latent Poisson states:
+  
+      h_1k ~ Pois(nu_k ...)
+
+  Meanwhile, the data is shrunk using a completely different set of weights:
+  
+      y_tk ~ Pois(lambda_k ...)
+
+PrGDS-v2 (version 2) uses shrinkage weights drawn from a Poisson-randomized gamma process:
+      
+      gamma_0, beta ~ Gam(...)
+      g_k ~ Pois(gamma_0 / K)
+      nu_k ~ Gam(eps + g_k, beta)
+
+And, it uses them to shrink both the first latent state and the data:
+
+    h_1k ~ Pois(nu_k ...)
+    y_tk ~ Pois(lambda_k ...)
+
+I've run experiments using both v1 and v2. For both, I've tried with:
+* Dirichlet versus gamma priors over the factor matrix in the Poisson likelihood
+* eps=0 versus eps=1 for the Poisson-randomized gamma prior over theta_tk
+
+And, for v2 I've additionally tried with:
+* eps=0 versus eps=1 for the prior over nu_k
+
+Results observations:
+* The forecasting performance is **terrible** when using gamma priors over the factor matrix; this is especially true for v2.
+* The Dirichlet models for v2 are generally doing the best.
+* None of the nu_k=0 for the eps=0 version of v2. This is disappointing. We were hoping that some components would be shut off (like actually *shut off*).
+
+We want to show that developing this whole model class was worth it. One of the main sells is that using Poisson-randomized dynamics yields a richer model class---i.e., one that allows for gamma priors over factors in the Poisson likelihood. However, remember, we can make this point for **just the gamma priors over lambda_k** (PGDS cannot incorporate those and must shrink with a complicated prior over the transition matrix). Let's just stop testing with gamma priors over the factor matrix since that version does terribly and is not necessary to showoff this new model class. 
