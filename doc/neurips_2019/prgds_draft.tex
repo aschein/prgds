@@ -104,47 +104,6 @@ In recent years, Poisson factorization has emerged as general framework for mode
 
 This paper seeks to fill a gap in the literature between Poisson factorization models that are \emph{tractable}---i.e., those that yield closed-form complete conditionals---and those that are \emph{expressive}---i.e., capable of capturing a variety of complex dependence structures. To do so, we introduce a fundamentally new modeling motif---an alternating series of discrete Poisson and continuous gamma latent variables---that is analytically convenient, computationally tractable, and widely applicable. We rely on this motif to construct the Poisson-randomized gamma dynamical system (PrGDS), a model for sequentially observed count tensors. Under a specific hyperparameter setting, the continuous latent states of the PrGDS may take values of \emph{exactly} zero thus encoding a strong inductive bias towards sparsity and burstiness. We find that this variant is uniquely capable of inferring latent structure that is highly localized in time. The PrGDS is closely related to the Poisson--gamma dynamical system (PGDS) \cite{schein2016poisson}. We detail the connection between the two models by representing the PrGDS in terms of the \emph{randomized gamma distribution of the first type} (RG1)~\cite{yuan2000bessel,makarov2010exact}. We also discuss how the PGDS is fundamentally limited by the auxiliary variable scheme it requires to perform inference in its non-conjugate structure. By contrast, without any data augmentation, the PrGDS admits closed-form complete conditionals for all latent variables by way of the little-known Bessel distribution~\cite{yuan2000bessel} and a novel univariate discrete distribution that we derive and call the \emph{size-biased confluent hypergeometric (SCH) distribution}. We compare the smoothing and forecasting ability of the PrGDS to the PGDS and two other baselines on a range of real-world count matrices and tensors of text, international events, and neural spike data. In addition to being uniquely capable of inferring highly localized latent structure, we find that the sparse PrGDS variant often obtains the lowest smoothing and forecasting perplexity of all models.~\looseness=-1
 
-% \section{Background}
-% \label{sec:bg}
-
-% Poisson factorization assumes that each observed count is a Poisson random variable $\yd \sim \Pois{\mud}$ with latent rate $\mud$ that is defined to be some function of shared model parameters. When the rate can be written as a (multi)linear function of model parameters---i.e., $\mud \teq \sum_{k}\mu_{\osubs k}$---Poisson factorization may be re-written in terms of its \emph{latent source representation}~\cite{Dunson2005bayesianlatent,cemgil2009bayesian} wherein the observed count is defined $\yd \triangleq \sum_k y_{\osubs k}$ to be the sum of latent sources, each of which is then independently Poisson distributed $y_{\osubs k} \sim \Pois{\mu_{\osubs k}}$. During posterior inference, coordinate-wise updates to the model parameters---either in Gibbs sampling or mean-field variational inference---are often available in closed form, efficient to compute, and parallelizable when conditioned on the latent sources. The first step in posterior inference is thus infer the latent sources from their conditional posterior which is multinomial \cite{steel1953relation}~\looseness=-1:
-% \begin{equation}
-% \label{eq:thinning}
-% \compcond{(y_{\osubs1},\dots,y_{\osubs K})} \sim \Multi{\yd,\, (\mu_{\osubs 1},\dots, \mu_{\osubs K})}\footnote{We leave implicit the normalization of the non-negative rate vector into a probability vector.}.
-% \end{equation}
-% When the observed count is $\yd \teq 0$, then $y_{\osubs k} \teq 0$, almost surely, and no computation is required to update the latent sources. Thus, any Poisson factorization that admits a latent source representation scales linearly with only the number of non-zero counts in the data set. This property is indispensable when modeling count tensors which typically contain exponentially more entries than non-zeros~\cite{bhattacharya2012simplex}.~\looseness=-1
-
-% The latent source representation is only available under the (multi)linear constraint $\mud \teq \sum_{k}\mu_{\osubs k}$. Since the Poisson rate parameter must be non-negative, this constraint comes at a cost: we may only impose non-negative prior distributions over the model parameters. This constraint notably excludes use of the Gaussian distribution, which is ubiquitous in time-series modeling due to its analytic and computational tractability. For instance, the Poisson LDS~\cite{macke2011empirical} links the widely-used Gaussian linear dynamical systems (LDS)~\cite{kalman1961new,ghahramani1999learning} to a Poisson likelihood via an exponential link function $\mud = \exp\left({\sum_k \cdots}\right)$. In general, the generalized linear modeling (GLM) approach~\cite{nelder1972generalized} that employs non-linear functions to link real-valued parameters to the Poisson likelihood is incompatible with the latent source representation and posterior inference no longer scales na\"ively with only the non-zeros. 
-
-% The challenge we embrace in this paper is thus to construct expressive and structured priors from only non-negative distributions. A reasonable approach is to use the log-normal as a prior, as in Dynamic Poisson factorization~\cite{charlin2015dynamic}. A more natural approach is to use gamma and Dirichlet priors, which are conjugate to the Poisson distribution and yield analytically closed-form complete conditionals. Gamma random variables can be conjugately chained via their rate parameter $\theta^{\mathsmaller{(t)}} \sim \Gam{a,\,\theta^{\mathsmaller{(t\tm 1)}}}$; this motif has been applied to construct time series models~\cite{cemgil2007conjugate,jerfel2016dynamic} as well as deep belief networks~\cite{ranganath2015deep}. Since gamma random variables are inversely proportional to their rate parameter, these chains must insert intermediate auxiliary gammas to naturally model time series. Moreover, since the rate parameter contributes quadratically to the variance, gamma rate chains are highly volatile for large values, and may be inappropriate for certain data sets. A recent line of work explores chaining gamma random variables via their shape parameter $\theta^{\mathsmaller{(t)}} \sim \Gam{\theta^{\mathsmaller{(t\tm 1)}}, c}$~\cite{acharya2015nonparametric,yang2018dependent}. Although non-conjugate, when linked to Poisson observations, an auxiliary variable scheme based on augmentation of the negative binomial distribution~\cite{zhou2012augment-and-conquer} may be applied to yield closed form complete conditionals. This motif has been generalized construct dynamical systems~\cite{schein2016poisson} (which we discuss in detail in \cref{sec:connections}), deep variants thereof~\cite{gong2017deep,guo2018deep}, and deep belief networks~\cite{zhou2015poisson}.~\looseness=-1
-
-% We take a new approach in this paper. Instead of chaining gamma random variables directly, we introduce alternating chains of conditionally gamma- and Poisson- distributed states. This construction is \emph{semi}-conjugate yet yields closed-form complete conditionals for all states, as we show in \cref{sec:mcmc}.\looseness=-1
-
-% Autoregressive approach. The Hawkes process describes a self- or mutually-excitatory Poisson process from which models can be built \cite{blundell2012modelling,simma2012modeling,linderman2014discovering}. Vector autoregressive approach to count time-series; see \cite{brandt2012bayesian} for a history of moving average and autoregressive models for count time series.
-
-
-% Allocative Poisson matrix factorization \cite{canny2004gap,Dunson2005bayesianlatent,titsias2008infinite,cemgil2009bayesian,zhou2011beta,gopalan2013efficient,paisley2014bayesian}. 
-
-% Non-negative tensor decomposition \citep{cichocki2007non,kolda2009tensor} and probabilistic Poisson tensor decomposition \cite{chi2012tensors}, and Bayesian variants \cite{ermis2014bayesian,schein2015bayesian,schein2016bayesian}.
-
-% Canonical polyadic (CP) \cite{harshman1970foundations} and Tucker \cite{tucker1964extension} decompositions.
-
-% See \cite{cemgil2019bayesian} for a review of this area along with connections.
-
-% This family of models is underdeveloped due to the lack of tractable and convenient modeling motifs using only non-negative priors. We introduce a fundamentally novel motif and build a dynamical system with it that uses it to chain together dynamic latent states and uses it to shrink.  
-
-
-% Models that are not tailored to count data fail to make this distinction and thus tend to waste computation and statistical power on the exponentially-large number of zeros, as if each were as informative as a non-zero observation.
-
-
-%  Thus, a good model for count time series is one that is statistically robust to sparsity, finding structure in the non-zero observations.
-
-% In many cases, the zero-valued observations conflate true non-occurrence with unobserved occurrence, a property sometimes known as ``presence-only data''. For instance, the fact that a user listened to a Beatles song twenty times this month is far more informative about their musical taste than the fact that they did not listen to a Die Antwoord song---a zero-valued observation conflates multiple scenarios; 1) they may know about Die Antwoord and dislike them, 2) they may never have been exposed to Die Antwoord, or 3) they have listened to them this month, but on a different platform. Moreover, the fact that the word ``Poisson'' appears in this paper is far more informative than the fact that the word ``banana'' only appears once.
-
-
-
-
-
 % \pagebreak
 \section{Poisson-randomized gamma dynamical systems (PrGDS)}
 \label{sec:prgds}
@@ -193,12 +152,12 @@ Both $\epslambda$ and $\gamma$ are divided by the number of components $K$ in \c
 \end{equation}
 Thus, this prior thus encodes an inductive bias towards small values of $\lambda_k$ and may be interpreted as the finite truncation of a novel Bayesian nonparametric process. A small value of $\lambda_k$ shrinks the Poisson rates of both the data $\ydt$ and the first discrete latent state $h^{\mathsmaller{(0)}}_k$---this prior thus encourages the model to only infer components that are both predictive of the data and useful for fitting the latent dynamics.~\looseness=-1
 
+
 The marginal expectation of the state vector $\boldsymbol{\theta}^{\mathsmaller{(t)}}$ takes the canonical form of linear dynamical systems,~\looseness=-1
 \begin{align}
-\mathbb{E}\left[\boldsymbol{\theta}^{\mathsmaller{(t)}} \given \boldsymbol{\theta}^{\mathsmaller{(t \tm 1)}}\right] = \mathbb{E}\left[\mathbb{E}\left[\boldsymbol{\theta}^{\mathsmaller{(t)}} \given \boldsymbol{h}^{\mathsmaller{(t \tm 1)}}\right]\right] = \tfrac{\epstheta}{\tau} + \Pi \, \boldsymbol{\theta}^{\mathsmaller{(t \tm 1)}},
+\mathbb{E}\left[\boldsymbol{\theta}^{\mathsmaller{(t)}} \given \boldsymbol{\theta}^{\mathsmaller{(t \tm 1)}}\right] = \mathbb{E}\left[\mathbb{E}\left[\boldsymbol{\theta}^{\mathsmaller{(t)}} \given \boldsymbol{h}^{\mathsmaller{(t \tm 1)}}\right]\right] = \epstheta \tau^{-1} + \Pi \, \boldsymbol{\theta}^{\mathsmaller{(t \tm 1)}},
 \end{align}
-since for a single entry $\E{\thetakt} \teq \big(\epstheta \tp \E{\hkt}\big)\tau^{-1} \teq \big(\epstheta \tp \tau \sum_{k_2 = 1}^K \pi_{kk_2} \,\thetakttm \big) \tau^{-1}$. The \emph{concentration parameter} $\tau$ appears in both the Poisson and gamma distributions in \cref{eq:thetaktandhkt} and contributes to the variance of the process while mostly canceling out of the expectation, except for the additive bias term $\tfrac{\epstheta}{\tau}$ that vanishes when $\epstheta \teq 0$.
-
+since by iterated expectation $\E{\thetakt} \teq \big(\epstheta \tp \E{\hkt}\big)\tau^{-1} \teq \big(\epstheta \tp \tau \sum_{k_2 = 1}^K \pi_{kk_2} \,\thetakttm \big) \tau^{-1}$. The \emph{concentration parameter} $\tau$ appears in both the Poisson and gamma distributions in \cref{eq:thetaktandhkt} and thus contributes to the variance of the process while canceling out of the expectation, except for the additive term $\epstheta \tau^{-1}$ which vanishes when $\epstheta \teq 0$.
 
 More generally, we can marginalize out all of the discrete latent states $\hkt$ to obtain a purely continuous dynamical system in terms of the \emph{randomized gamma distribution of the first type} (RG1) \cite{yuan2000bessel,makarov2010exact},~\looseness=-1
 \begin{equation}
@@ -219,115 +178,138 @@ when $\epstheta > 0$ and in terms of a limiting form of the RG1 when $\epstheta 
 \includegraphics[width=\linewidth]{../../fig/distributions/annotated_rg1.pdf}
 \caption{\footnotesize \label{fig:rg1} The randomized gamma distribution of the first type (RG1) \cite{yuan2000bessel,makarov2010exact} has positive support $\theta \!>\!  0$ and is defined by three parameters $\epsilon,\lambda,\beta \!>\! 0$. When $\epsilon < 1$ (\emph{Left}) the RG1 resembles a soft ``spike-and-slab'' while when $\epsilon \geq 1$ (\emph{Middle and Right}) it resembles a more-dispersed form of the gamma distribution. A limiting case of the RG1 when $\epsilon \!\rightarrow\! 0$ is the Poisson-randomized gamma distribution \cite{zhou2016augmentable} which includes zeros in its support $\theta \geq 0$.~\looseness=-1}
 \end{figure}
-The PrGDS is related to the Poisson--gamma dynamical system (PGDS)~\citep{schein2016poisson} wherein $\thetakt$ evolve as~\looseness=-1
+The PrGDS bears a close relationship to the Poisson--gamma dynamical system (PGDS)~\citep{schein2016poisson} wherein~\looseness=-1
 \begin{equation}
-\label{eq:pgds_thetakt}
-\underbrace{\thetakt \sim \Gam{\tau\,\sum_{k_2=1}^K \pi_{kk_2} \thetakttm,\, \tau}}_{\textrm{PGDS \cite{schein2016poisson}}}
+\label{eq:pgds}
+\thetakt \sim \textrm{Gam}\Big(\tau\,\sum_{k_2=1}^K \pi_{kk_2} \thetakttm,\, \tau\Big)\,\,\textrm{ such that }\,\,
 % 
-\hspace{1em}\textrm{vs.}\hspace{1em} 
-% 
-\underbrace{\thetakt \sim \textrm{RG1}\left(\epstheta,\,\tau\sum_{k_2=1}^K \pi_{kk_2} \thetakttm,\, \tau\right)}_{\textrm{PrGDS (this paper)}}.
+\mathbb{E}\left[\boldsymbol{\theta}^{\mathsmaller{(t)}} \given \boldsymbol{\theta}^{\mathsmaller{(t \tm 1)}}\right]= \Pi \, \boldsymbol{\theta}^{\mathsmaller{(t \tm 1)}}.
 \end{equation}
-Here we've re-expressed the PrGDS with all discrete continuous latent states $\hkt$ marginalized out---doing so, yields a dynamical system in terms of the \emph{randomized gamma distribution of the first type} (RG1) \cite{yuan2000bessel,makarov2010exact} which we describe in \cref{fig:rg1}. In the PGDS, $\thetakt$ is gamma distributed when conditioned directly on $\boldsymbol{\theta}^{\mathsmaller{(t \tm 1)}}$, which appears in its shape parameter. This dependence is non-conjugate and posterior inference relies on the recursive application ``augment-and-conquer'' \cite{zhou2012augment-and-conquer}, a data augmentation and marginalization scheme specific to the negative binomial distribution. By contrast, in the PrGDS, $\thetakt$ is only gamma distributed when conditioned on $\hkt$, whose expectation matches the shape parameter in the PGDS. When present, $\hkt$ breaks the dependence of $\thetakt$ on $\boldsymbol{\theta}^{\mathsmaller{(t \tm 1)}}$ which facilitates closed-form posterior inference without any data augmentation, as we'll see in \cref{sec:mcmc}. When marginalized out, $\hkt$ induces a more dispersed and potentially sparse version of the PGDS via the RG1 distribution.
+The PGDS imposes a direct and non-conjugate dependence between the gamma-distributed states. The complete conditional $P(\thetakt | -)$ is not immediately available in closed form under the PDGS and posterior inference relies on a complicated data augmentation scheme. By contrast, the PrGDS, inserts intermediate Poisson states $\hkt$ that break the intractable dependencies between the gamma states---although the Poisson is not a conjugate prior to the gamma distribution, this construction is still tractable since it yields a closed-form conditional $P(\hkt | -)$, as we'll show in \cref{sec:mcmc}. The PGDS is fundamentally limited by the data augmentation scheme it requires for posterior inference---specifically, this augmentation scheme does not allow any per-component weights $\lambda_k$ to appear in the Poisson rate of $\ydt$ in \cref{eq:tensor_likelihood}. To encourage parsimony, the PGDS instead draws weights $\lambda_k \sim \textrm{Gam}(\tfrac{\gamma}{K}, \beta)$ and uses them to shrink the transition matrix $\Pi$. This introduces more intractable dependencies that necessitate a different augmentation scheme for inference. We provide a graphical comparison of PGDS to PrGDS in \cref{fig:comparison}. In the Appendix, we further detail the limitations of PGDS which also include the restriction that the factors $\boldsymbol{\phi}_k^{\mathsmaller{(m)}}$ and columns $\boldsymbol{\pi}_k$ of the transition matrix are Dirichlet distributed; while we adopt those same assumptions in this paper, the PrGDS is not restricted to them.~\looseness=-1
 
-The PrGDS is compatible with a richer model class than the PGDS. The ``augment-and-conquer'' scheme for inference in the PGDS is only compatible with a subset of Poisson factorization models---in particular, it is only available when the distribution of the Poisson variable $\ykt \triangleq \sum_v y^{\mathsmaller{(t)}}_{vk}$---i.e., the sum of the latent sources across $v$---can be written $\ykt \sim \Pois{\thetakt c^{\mathsmaller{(t)}}}$ for some $c^{\mathsmaller{(t)}}$ that is constant across $k$. The only way to achieve this constraint, using conjugate priors, is by imposing Dirichlet priors over $\boldsymbol{\phi}_k$, so that $\sum_v \phi_{kv}\teq 1$, and to exclude per-component weights $\lambda_k$ from the likelihood. The PGDS is thus incompatible with gamma priors over the factors $\phi_{kv}$ which are widely used in practice \cite{cemgil2009bayesian,gopalan2015scalable,schein2015bayesian}. It is also incompatible with per-component weights $\lambda_k$ that are widely used in conjunction with Bayesian nonparametric shrinkage priors for implicit model selection \cite{acharya2015nonparametric,schein2016bayesian}. The PrGDS introduces no such constraints. Moreover, ``augment-and-conquer'' inference in the PGDS is only available when the columns of the transition matrix are constrained $\sum_{k_1=1}^K \pi_{k_1k} \teq 1$. No such constraint exists on the PrGDS---however, for the purposes of controlled comparison to the PGDS, we only consider variants of the PrGDS with this property and leave exploration of more exotic transition matrices for future work.
+The PGDS, along with its ``deep'' variants~\cite{gong2017deep,guo2018deep}, generalize gamma process dynamic Poisson factor analysis (GP-DPFA)~\citep{acharya2015nonparametric} which assumes a simple random walk $\thetakt \tsim \Gam{\theta^{\mathsmaller{(t \tm 1)}}_k,\, c^{\mathsmaller{(t)}}}$ that does not express any cross-component excitation (see also a related model~\cite{yang2018dependent}). These models belong to a line of work exploring the application of the ``augment-and-conquer'' data augmentation scheme~\cite{zhou2012augment-and-conquer} to perform inference in hierarchies of gamma variables chained via their shape and linked to Poisson observations---beyond time-series models, this construction can be used to build belief networks~\cite{zhou2015poisson}. An alternative approach is to chain gamma variables via their rate---e.g., $\theta^{\mathsmaller{(t)}} \sim \Gam{a,\,\theta^{\mathsmaller{(t\tm 1)}}}$. This motif has been applied to time-series models~\cite{cemgil2007conjugate,jerfel2016dynamic} as well as deep belief networks~\cite{ranganath2015deep}. This construction is conjugate and tractable. However, since gamma variables are inversely proportional to their rate, such chains insert extra intermediate variables to naturally model time series. Moreover, since the rate contributes quadratically to the variance, gamma rate chains may be highly volatile.~\looseness=-1
+
+Gamma shape and rate chains are just two examples of modeling motifs that are motivated by a non-negativity constraint central to efficient Poisson factorization. In general, Poisson factorization assumes that each observed counts are drawn $\yd \sim \Pois{\mud}$ with latent rate $\mud$ defined to be some function of model parameters. When the rate can be written as a (multi)linear function---i.e., $\mud \teq \sum_{k}\mu_{\osubs k}$---Poisson factorization may be equivalently expressed under its \emph{latent source representation}~\cite{Dunson2005bayesianlatent,cemgil2009bayesian} wherein the observed count is defined $\yd \triangleq \sum_k y_{\osubs k}$ to be the sum of latent sources, each of which is independently Poisson distributed $y_{\osubs k} \sim \Pois{\mu_{\osubs k}}$. Conditioning on the latent sources often induces conditional independences between the latent variables and parameters that facilitates closed-form, efficient, and parallelizable posterior inference---thus, the first step in either MCMC or variational inference is to update the latent sources from their complete conditionals, which is multinomial \cite{steel1953relation}~\looseness=-1,
+\begin{equation}
+\label{eq:thinning}
+\compcond{(y_{\osubs1},\dots,y_{\osubs K})} \sim \Multi{\yd,\, (\mu_{\osubs 1},\dots, \mu_{\osubs K})},
+\end{equation}
+where we leave implicit the normalization of the non-negative rates $\mu_{\osubs k}$ into a probability vector. When the observed count is zero $\yd \teq 0$, the sources are zero $y_{\osubs k} \teq 0$, almost surely, and no computation is required to update them. Thus, any Poisson factorization model that admits a latent source representation scales linearly with only the non-zero counts in the data. This property is indispensable when modeling count tensors which typically contain exponentially more entries than non-zeros~\cite{bhattacharya2012simplex}. 
+
+Since the latent source representation is only available when the rate $\mud$ is a (multi)linear function of parameters and since the rate must be non-negative, by definition of the Poisson distribution, efficient Poisson factorization is only compatible with non-negative priors over parameters. Modeling time series and other complex dependence structures with efficient Poisson factorization often requires developing novel motifs that notably exclude Gaussian priors which researchers have traditionally relied on for their analytic convenience and tractability. The Poisson LDS, for instance, \cite{macke2011empirical} links the widely-used Gaussian linear dynamical system~\cite{kalman1961new,ghahramani1999learning} to  Poisson observations via an exponential link function $\mud = \exp\left({\sum_k \cdots}\right)$. This is one instance of the generalized linear model (GLM) \cite{nelder1972generalized} approach that relies on a non-linear link function and thus does not yield a latent source representation. Another approach is to use log-normal priors, as in Dynamic Poisson Factorization \cite{charlin2015dynamic}---while this approach satisfies the non-negative constraint, the log-normal is not conjugate to the Poisson and does not closed-form conditionals. We also note a long tradition of autoregressive models for count time series including VAR models~\cite{brandt2012bayesian} and those based on Hawkes processes \cite{blundell2012modelling,simma2012modeling,linderman2014discovering}. This approach avoids the challenge of constructing tractable state-space models from non-negative priors by modeling temporal correlation directly between the count observations. For high-dimensional data, such as sequentially-observed tensors, an autoregressive approach is often untenable. 
+
+% As efficient Poisson factorization is  renewed interest \cite{cemgil2019bayesian}, the 
+
+% The PGDS is thus incompatible with gamma priors over the factors $\phi_{kv}$ which are widely used in practice \cite{cemgil2009bayesian,gopalan2015scalable,schein2015bayesian}. It is also incompatible with per-component weights $\lambda_k$ that are widely used in conjunction with Bayesian nonparametric shrinkage priors for implicit model selection \cite{acharya2015nonparametric,schein2016bayesian}. 
 
 % The concentration parameter $\tau$ in the PGDS is analogous to $\tau$ in the PrGDS in that it affects the variance of the latent dynamics without affecting the expected value. However, unlike in the PrGDS, it is treated as a fixed hyperparameter in the PGDS, since no natural conjugate prior exists when it appears in both the shape and rate of the gamma distribution.
 
-We also highlight gamma process dynamic poisson factor analysis (GP-DPFA)~\citep{acharya2015nonparametric} which assumes a simple random walk $\thetakt \tsim \Gam{\theta^{\mathsmaller{(t \tm 1)}}_k,\, c^{\mathsmaller{(t)}}}$ that does not allow for any cross-component excitation. This non-conjugate chain also requires an ``augment-and-conquer'' scheme for inference; however, that scheme does not impose constraints on the model class and, like PrGDS, is compatible with any non-negative prior over $\phi_{kv}$ and the inclusion of per-component weights $\lambda_k$. GP-DPFA is partly named for its assumption that the per-component weights are drawn from a truncated gamma process as~\looseness=-1
-\begin{equation}
-\label{eq:gpdpfa}
-\underbrace{\lambda_k \sim \Gam{\tfrac{\gamma_0}{K},\beta}}_{\textrm{GP-DPFA}~\citep{acharya2015nonparametric}}
-% 
-\hspace{1em}\textrm{vs.}\hspace{1em} 
-% 
-\underbrace{\lambda_k \sim \textrm{RG1}\left(\epslambda, \tfrac{\gamma_0}{K},\beta\right)}_{\textrm{PrGDS (this paper)}}
-\end{equation} 
-where, as in \cref{eq:thetaktandhkt}, we've re-expressed the PrGDS's prior on $\lambda_k$ with $g_k$ marginalized out.
 
-% \subsection{Tensor generalization}
-% \label{sec:tensor}
 
-% Consider a data set of of sequentially observed tensors $\boldsymbol{Y}^{\mathsmaller{(1)}},\dots,\boldsymbol{Y}^{\mathsmaller{(T)}}$. An entry $\ydt \!\in\! \{0,1,2,\dots\}$ in the $t^{\textrm{th}}$ tensor is subscripted by a multi-index $\osubs \equiv (\osub_1,\dots,\osub_M)$ which indexes into the $M$ modes of the tensor $\osub_m \in \{1,\dots,L_m\}$. The CP decomposition \cite{harshman1970foundations} version of the PrGDS would model $\yd$ as
-% \begin{align}
-% \label{eq:tensor_likelihood}
-% \ydt &\sim \Pois{\rhot \sum_{k = 1}^K \lambda_k \, \thetakt \prod_{m=1}^M \phi^{\mathsmaller{(m)}}_{k \osub_m}},
-% \end{align}
-% where there is now a set of factors $\phi^{\mathsmaller{(m)}}_{k \osub_m}$ for each mode $m$. An analogous generalization can be made of the PGDS. However, as before, the ``augment-and-conquer'' inference is only available if $\lambda_k=\lambda$ and $\sum_{i_m=1}^{L_m} \phi^{\mathsmaller{(m)}}_{k \osub_m} \teq 1$ for all $m$. A secondary contribution of this paper is the generalization of the PGDS to tensor-valued time series which we use in \cref{sec:experiments} as a baseline. We provide the relevant inference equations in the Appendix and will open source our Cython implementation.
+% \section{Background}
+% \label{sec:bg}
+
+
+
+% The challenge we embrace in this paper is thus to construct expressive and structured priors from only non-negative distributions. A reasonable approach is to use the log-normal as a prior, as in Dynamic Poisson factorization~\cite{charlin2015dynamic}. A more natural approach is to use gamma and Dirichlet priors, which are conjugate to the Poisson distribution and yield analytically closed-form complete conditionals. 
+
+% We take a new approach in this paper. Instead of chaining gamma random variables directly, we introduce alternating chains of conditionally gamma- and Poisson- distributed states. This construction is \emph{semi}-conjugate yet yields closed-form complete conditionals for all states, as we show in \cref{sec:mcmc}.\looseness=-1
+
+
+
+% Allocative Poisson matrix factorization \cite{canny2004gap,Dunson2005bayesianlatent,titsias2008infinite,cemgil2009bayesian,zhou2011beta,gopalan2013efficient,paisley2014bayesian}. 
+
+% Non-negative tensor decomposition \citep{cichocki2007non,kolda2009tensor} and probabilistic Poisson tensor decomposition \cite{chi2012tensors}, and Bayesian variants \cite{ermis2014bayesian,schein2015bayesian,schein2016bayesian}.
+
+% See \cite{cemgil2019bayesian} for a review of this area along with connections.
+
+% This family of models is underdeveloped due to the lack of tractable and convenient modeling motifs using only non-negative priors. We introduce a fundamentally novel motif and build a dynamical system with it that uses it to chain together dynamic latent states and uses it to shrink.  
+
+
+% Models that are not tailored to count data fail to make this distinction and thus tend to waste computation and statistical power on the exponentially-large number of zeros, as if each were as informative as a non-zero observation.
+
 
 \section{Posterior inference}
 \label{sec:mcmc}
-All latent variables in the PrGDS have closed form complete conditionals without any data augmentation. Iteratively re-sampling each variable from its complete conditional constitutes a Gibbs sampler that is asymptotically guaranteed to sample from the exact posterior. We derive and provide the complete conditionals for the latent variable with non-standard priors here and relegate the rest to the Appendix. To ease exposition, we first discuss inference in a simple version of the novel modeling motif on which PrGDS is based.
+The complete conditionals for all latent variables in the PrGDS are immediately available in closed form without any data augmentation. Iteratively re-sampling each variable from its conditional constitutes a Gibbs sampling algorithm. We provide conditionals for the latent variables with non-standard priors here and relegate the rest to the Appendix. The tractability of the PrGDS is tied to the novel modeling motif on which it is based which we first discuss in its general form.~\looseness=-1
 
-\subsection{The Poisson--gamma--Poisson recursion}
+\subsection{Poisson--gamma--Poisson recursions}
 \label{sec:recursion}
 Consider the following model of $m$ involving latent variables $\theta$ and $h$ and fixed $c_1, c_2, c_3, \epstheta >0$:
-\begin{align}
-h &\sim \Pois{c_1} \\
-\theta &\sim \Gam{\epstheta \tp h, c_2} \\
-m &\sim \Pois{\theta c_3}\\
-\intertext{This model is \emph{semi}-conjugate. The gamma prior of $\theta$ is conjugate to the Poisson and its posterior is:}
+\begin{equation}
+h \sim \Pois{c_1}, \,\,
 % 
+\theta \sim \Gam{\epstheta \tp h, c_2},\,\,
+% 
+\textrm{and}\,\, m \sim \Pois{\theta c_3}.
+\end{equation}
+This model is \emph{semi}-conjugate. The gamma prior of $\theta$ is conjugate to the Poisson and its posterior is
+%
+\begin{align} 
 \label{eq:gamma}
-\compcond{\theta} &\sim \Gam{\epstheta \tp h + m,\, c_2 + c_3}
+\compcond{\theta} &\sim \Gam{\epstheta \tp h + m,\, c_2 + c_3}.
 % 
-\intertext{While the Poisson prior of $h$ not conjugate to the gamma, the posterior of $h$ is still available in closed from by way of the Bessel distribution \cite{yuan2000bessel}, which we describe in \cref{fig:bessel}:}
+\intertext{The Poisson prior over $h$ is not conjugate to the gamma--- however the conditional posterior of $h$ is still available in closed form by way of the Bessel distribution \cite{yuan2000bessel} which we define in \cref{fig:bessel}:}
 %
 \label{eq:bessel}
-\compcond{h} &\sim \Bess{\epstheta \tm 1,\, 2\sqrt{\theta \,c_2\, c_1}}
+\compcond{h} &\sim \textrm{Bes}\big(\epstheta \tm 1,\, 2\sqrt{\theta \,c_2\, c_1}\big).
 \end{align}
-Provided that $\epstheta> 0$, we may simply iterate between \cref{eq:gamma,eq:bessel} to perform posterior inference for $\theta$ and $h$. The Bessel distribution can be sampled efficiently---we will open source our Cython implementation of the rejection samplers given by Devroye (2002) \cite{devroye2002simulating}. When $\epstheta \teq 0$, then $\theta \teq 0$, almost surely, if $h \teq 0$, and vice versa. The Markov chain just described therefore has an absorbing condition at $h=0$ and thus violates detailed balance. To perform posterior inference in the case of $\epstheta \teq 0$, we must therefore sample $h$ with $\theta$ marginalized out. Towards that end, we prove the following:~\looseness=-1
+The Bessel distribution can be sampled efficiently \cite{devroye2002simulating}; we will release our Cython implementation. 
+Provided that $\epstheta \!>\! 0$, sampling $\theta$ and $h$ iteratively from \cref{eq:gamma,eq:bessel} constitutes a valid Markov chain for posterior inference. When $\epstheta \teq 0$ though, $\theta \teq 0$, almost surely, if $h \teq 0$, and vice versa---thus, this Markov chain has an absorbing condition at $h \teq 0$ and violates detailed balance. In this case, we must therefore sample $h$ with $\theta$ marginalized out---towards that end, we give Theorem 1.~\looseness=-1
 
 \textbf{Theorem 1:} The \emph{incomplete} conditional $P(h\given{-\backslash} \theta)\triangleq \int P(h,\theta\given -)\,\mathbf{d}\theta$ is available in closed form as~\looseness=-1
 \begin{align}
 \label{eq:sch}
 \left(h \given {-\backslash} \theta\right) &\sim
 \begin{cases}
-\Pois{\frac{c_1\,c_2}{c_3+c_2}} &\textrm{if }m=0\\
-\textrm{SCH}\left(m,\, \frac{c_1\,c_2}{c_3+c_2}\right)\, &\textrm{otherwise}
+\textrm{Pois}\big(\frac{c_1\,c_2}{c_3+c_2}\big) &\textrm{if }m=0\\
+\textrm{SCH}\big(m,\, \frac{c_1\,c_2}{c_3+c_2}\big)\, &\textrm{otherwise}
 \end{cases}
 \end{align}
-where SCH is a novel univariate discrete distribution we call the \emph{size-biased confluent hypergeometric distribution} and describe in \cref{fig:sch}. We prove this in the Appendix where we provide further details and description of the SCH distribution, including its mode and how to sample from it. 
+where SCH is a novel univariate discrete distribution we call the \emph{size-biased confluent hypergeometric distribution}. We define the SCH in \cref{fig:sch} and provide further details about it in the Appendix including a derivation of its mode, how to from sample it, and the proof for Theorem 1.~\looseness=-1
 
 \begin{figure*}[t]
 \centering
-\subfigure[Bessel distribution~\cite{yuan2000bessel}]
+\subfigure[\footnotesize Bessel distribution~\cite{yuan2000bessel}]
 {\label{fig:bessel}\includegraphics[width=0.49\linewidth]{../../fig/distributions/annotated_bessel.pdf}}\hfill
 % 
 % \hspace{0.5em}
-\subfigure[Size-biased confluent hypergeometric distribution]
+\subfigure[\footnotesize Size-biased confluent hypergeometric distribution]
 {\label{fig:sch}\includegraphics[width=0.49\linewidth]{../../fig/distributions/annotated_sch.pdf}}
-\caption{\label{fig:distributions} Two discrete distributions that arise as posteriors in Poisson--gamma--Poisson recursions.~\looseness=-1}
+\caption{\footnotesize \label{fig:distributions} Two discrete distributions that arise as posteriors in Poisson--gamma--Poisson recursions.~\looseness=-1}
 \end{figure*}
 
 \subsection{Closed-form complete conditionals for PrGDS}
 The PrGDS yields a latent source representation (see \cref{eq:thinning})---posterior inference thus begins with
 \begin{align}
-\compcond{(y^{(t)}_{vk})_{k=1}^K} &\sim \Multi{\yvt,\, (\lambda_k \, \thetakt \phikv)_{k=1}^K},
-%
-\intertext{which needn't be performed for $\yvt \teq 0$. Similarly, we may re-represent $\hkt \equiv \hkdt = \sum_{k_2=1}^K \hkkt$ where $\hkkt \sim \Pois{\tau \, \pi_{kk_2} \thetakttm}$ collectively constitute a latent $K \!\times\! K$ count matrix.  Where useful, we use dot-notation to denote summing over an axis---in this case $\hkdt$ denotes the sum of the $k^{\textrm{th}}$ row of the latent count matrix. If conditioned on the row sum $\hkdt$, we may thin it across columns:~\looseness=-1}
+\compcond{(y^{\mathsmaller{(t)}}_{\osubs k})_{k=1}^K} &\sim \Multi{\ydt,\big(\lambda_k \, \thetakt \mathsmaller{\prod}_{m=1}^M \phimki\big)_{k=1}^K},
+\intertext{We may similarly represent $\hkt$ under its latent source representation as $\hkt \tequiv \hkdt \teq \sum_{k_2=1}^K \hkkt$ where $\hkkt \tsim \Pois{\tau \, \pi_{kk_2} \thetakttm}$. When useful, we use dot-notation to denote summing over an axis---in this case $\hkdt$ denotes the sum of the $k^{\textrm{th}}$ row of the $K \ttimes K$ matrix of latent counts $\hkkt$. The complete conditional of the $k^{\textrm{th}}$ row of counts, when conditioned on their sum $\hkdt$, is~\looseness=-1}
 % 
 \compcond{(\hkkt)_{k_2=1}^K} &\sim \Multi{\hkdt,\,(\pi_{kk_2} \thetakttm)_{k_2=1}^K}.
 \end{align}
-Now consider the column sum $\hdktp \triangleq \sum_{k_1=1}^K h_{k_1k}^{\mathsmaller{(t \tp 1)}}$. Due to Poisson additivity, we may assume $\hdktp \sim \Pois{\thetakt \, \tau\,\pi_{\cdot k}}$\footnote{We only consider Dirichlet priors such that $\pi_{\cdot k} \triangleq \sum_{k_1=1}^K \pi_{k_1k} \teq 1$ but give equations that apply generally.~\looseness=-1} and similarly, $\ykt \sim \Pois{\thetakt \rhot \lambda_k \phi_{k\cdot }}$. Define $\mkt \triangleq \hdktp \tp \ykt$ which is also Poisson $\mkt \sim \Pois{\thetakt(\tau\,\pi_{\cdot k}+ \rhot \lambda_k \phi_{k\cdot })}$. By gamma--Poisson conjugacy:~\looseness=-1
+To derive the conditional for $\thetakt$ we aggregate all Poisson variables that depend on it. By Poisson additivity, the column sum $\hdktp \teq \sum_{k_1=1}^K h_{k_1k}^{\mathsmaller{(t \tp 1)}}$ is distributed $\hdktp \tsim \Pois{\thetakt \, \tau\,\pi_{\cdot k}}$ and similarly $y_{\cdot k}^{\mathsmaller{(t)}}$ is distributed $y_{\cdot k}^{\mathsmaller{(t)}} \tsim \textrm{Pois}\big(\thetakt \rhot \lambda_k \prod_{m=1}^M\phi^{\mathsmaller{(m)}}_{k\cdot}\big)$. The count $\mkt \triangleq \hdktp \tp \ykt$ then isolates all dependence on $\thetakt$ and is also Poisson distributed. By gamma--Poisson conjugacy, the conditional of $\thetakt$ is~\looseness=-1
 \begin{align}
+% \footnote{We provide general equations but note they simplify with Dirichlet priors since $\pi_{\cdot k} \teq 1$ and $\phi^{\mathsmaller{(m)}}_{\cdot k} \teq 1$.~\looseness=-1}
  % 
-\compcond{\thetakt} &\sim \Gam{\epstheta \tp \hkdt + \mkt,\, \tau + \tau\,\pi_{\cdot k}+ \rhot \lambda_k \phi_{k\cdot }}.
+\compcond{\thetakt} &\sim \textrm{Gam}\big(\epstheta \tp \hkdt + \mkt,\, \tau + \tau\,\pi_{\cdot k}+ \rhot \lambda_k \, \mathsmaller{\prod}_{m=1}^M \phi^{\mathsmaller{(m)}}_{k\cdot }\big).
 % 
-\intertext{When $\epstheta > 0$, we may apply the identity given in \cref{eq:bessel} to sample $\hkdt$ conditioned on $\thetakt$:}
+\intertext{When $\epstheta > 0$, we may apply the identity in \cref{eq:bessel} and sample $\hkdt$ from its complete conditional:}
 % 
-\compcond{\hkdt} &\sim \Bess{\epstheta \tm 1,\, 2 \sqrt{\thetakt \, \tau^2 \sum_{k_2=1}^K \pi_{kk_2} \thetakttm}}.
+\compcond{\hkdt} &\sim \textrm{Bessel}\Big(\epstheta \tm 1,\, 2 \sqrt{\thetakt \, \tau^2 \mathsmaller{\sum}_{k_2=1}^K \pi_{kk_2} \thetakttm}\Big).
+\end{align}
+When $\epstheta \teq0$, we instead apply Theorem 1 to sample $\hkdt$ where $\mkt$ is analogous to $m$ in \cref{eq:sch}:
 % 
-\intertext{If $\epstheta=0$, we may apply Theorem 1 where $\mkt \triangleq \hdktp \tp \ykt$ is analogous to $m$ in \cref{eq:sch}:}
-% 
+\begin{align}
 \left(\hkdt \given {-\backslash} \thetakt\right) &\sim 
 \begin{cases}
-\Pois{\frac{\tau^2 \sum_{k_2=1}^K \pi_{kk_2} \thetakttm}{\tau + \tau\,\pi_{\cdot k} + \rhot \lambda_k \phi_{k\cdot }}} &\textrm{if } \mkt = 0 \\ 
+\textrm{Pois}(\zeta_{k}^{\mathsmaller{(t)}}) &\textrm{if } \mkt \teq 0 \\ 
 % 
-\textrm{SCH}\left(\mkt,\, \frac{\tau^2 \sum_{k_2=1}^K \pi_{kk_2} \thetakttm}{\tau + \tau\,\pi_{\cdot k} + \rhot \lambda_k \phi_{k\cdot }}\right) &\textrm{otherwise}.
-\end{cases}
+\textrm{SCH}(\mkt,\, \zeta_{k}^{\mathsmaller{(t)}}) &\textrm{otherwise}
+\end{cases} 
+\hspace{1em}\textrm{where }\,\,
+\zeta_{k}^{\mathsmaller{(t)}} \triangleq \mathsmaller{\frac{\tau^2 \sum_{k_2=1}^K \pi_{kk_2} \thetakttm}{\tau + \tau\,\pi_{\cdot k} + \rhot \lambda_k \prod_{m=1}^M\phi^{\mathsmaller{(m)}}_{k\cdot }}}.
 \end{align}
-We provide all remaining complete conditionals in the Appendix. The complete conditionals for $\lambda_k$ and $g_k$ follow from applying the same identities for Poisson--gamma--Poisson recursions while the updates to $\gamma$, $\beta$, $\phi_{kv}$, and $\pi_{kk_2}$ all follow from standard conjugacy. The concentration parameter $\tau$ appears in both a Poisson rate and a gamma rate; although non-standard its gamma prior is conjugate to both and its posterior is gamma.~\looseness=-1
+The conditionals for $\lambda_k$ and $g_k$ follow from applying the same Poisson--gamma--Poisson identities while those for $\gamma$, $\beta$, $\boldsymbol{\phi}^{\mathsmaller{(m)}}_k$, $\boldsymbol{\pi}_{k}$, and $\tau$ all follow from conjugacy. We provide them all in the Appendix.~\looseness=-1
 % b
 
 \section{Experiments}
