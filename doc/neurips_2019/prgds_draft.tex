@@ -152,9 +152,9 @@ Both $\epslambda$ and $\gamma$ are divided by the number of components $K$ in \c
 \end{equation}
 Thus, this prior thus encodes an inductive bias towards small values of $\lambda_k$ and may be interpreted as the finite truncation of a novel Bayesian nonparametric process. A small value of $\lambda_k$ shrinks the Poisson rates of both the data $\ydt$ and the first discrete latent state $h^{\mathsmaller{(0)}}_k$---this prior thus encourages the model to only infer components that are both predictive of the data and useful for fitting the latent dynamics.~\looseness=-1
 
-
 The marginal expectation of the state vector $\boldsymbol{\theta}^{\mathsmaller{(t)}}$ takes the canonical form of linear dynamical systems,~\looseness=-1
 \begin{align}
+\label{eq:expectation}
 \mathbb{E}\left[\boldsymbol{\theta}^{\mathsmaller{(t)}} \given \boldsymbol{\theta}^{\mathsmaller{(t \tm 1)}}\right] = \mathbb{E}\left[\mathbb{E}\left[\boldsymbol{\theta}^{\mathsmaller{(t)}} \given \boldsymbol{h}^{\mathsmaller{(t \tm 1)}}\right]\right] = \epstheta \tau^{-1} + \Pi \, \boldsymbol{\theta}^{\mathsmaller{(t \tm 1)}},
 \end{align}
 since by iterated expectation $\E{\thetakt} \teq \big(\epstheta \tp \E{\hkt}\big)\tau^{-1} \teq \big(\epstheta \tp \tau \sum_{k_2 = 1}^K \pi_{kk_2} \,\thetakttm \big) \tau^{-1}$. The \emph{concentration parameter} $\tau$ appears in both the Poisson and gamma distributions in \cref{eq:thetaktandhkt} and thus contributes to the variance of the process while canceling out of the expectation, except for the additive term $\epstheta \tau^{-1}$ which vanishes when $\epstheta \teq 0$.
@@ -271,11 +271,11 @@ where SCH is a novel univariate discrete distribution we call the \emph{size-bia
 \begin{figure*}[t]
 \centering
 \subfigure[\footnotesize Bessel distribution~\cite{yuan2000bessel}]
-{\label{fig:bessel}\includegraphics[width=0.49\linewidth]{../../fig/distributions/annotated_bessel.pdf}}\hfill
+{\label{fig:bessel}\includegraphics[width=0.5\linewidth]{../../fig/distributions/annotated_bessel.pdf}}\hfill
 % 
 % \hspace{0.5em}
 \subfigure[\footnotesize Size-biased confluent hypergeometric distribution]
-{\label{fig:sch}\includegraphics[width=0.49\linewidth]{../../fig/distributions/annotated_sch.pdf}}
+{\label{fig:sch}\includegraphics[width=0.5\linewidth]{../../fig/distributions/annotated_sch.pdf}}\vspace{-0.5em}
 \caption{\footnotesize \label{fig:distributions} Two discrete distributions that arise as posteriors in Poisson--gamma--Poisson recursions.~\looseness=-1}
 \end{figure*}
 
@@ -314,11 +314,42 @@ The conditionals for $\lambda_k$ and $g_k$ follow from applying the same Poisson
 
 \section{Experiments}
 \label{sec:experiments}
+
+\begin{itemize}
+  \item Evaluation: smoothing, forecasting, perplexity
+  \item Baselines: Matrices: PGDS, GP-DPFA, BPTF. Tensors PGDS (our implementation), BPTF.
+  \item 
+\end{itemize}
+% \begin{figure*}[t]
+% \centering
+% \includegraphics[width=0.75\linewidth]{../../results/matrices/new_matrix_results.pdf}
+% \caption{\footnotesize \label{fig:matrix_results}Results for the experiments described by Schein~(2016)~\cite{schein2016poisson} for dynamic count matrices. Performance is measured by log perplexity---\emph{lower} is better, see \cref{eq:perplexity}. The top vs.\ bottom rows report smoothing vs.\ forecasting performance for each model, across data sets (columns). In each plot, the baselines are in red (PGDS) and orange (GP-DPFA) while the eight variants of the PrGDS are defined by a combination of color and hatch: i.e., blue vs.\ gamma denotes Dirichlet vs.\ gamma priors, open and closed circles denote $\epstheta \teq 0$ and $\epslambda \teq 0$, respectively, while slanted and straight lines denote $\epstheta \teq 1$ and $\epslambda \teq 1$, respectively. A clear takeaway is the superiority of sparse variant $\epstheta \teq 0$ to the non-sparse one $\epstheta \teq 1$.}
+% \end{figure*}
+
+% \begin{figure*}[h]
+% \centering
+% \includegraphics[width=0.4\linewidth]{../../results/tensors/new_tensor_results.pdf}
+% \caption{\footnotesize\label{fig:tensor_results} Results for the experiments on dynamic count tensors. See the caption of \cref{fig:matrix_results} for description of the legend. Performance is measured by log perplexity where lower is better. Note that the log perplexity scores are negative for the macaque data. One takeaway is that the Dirichlet variants of the PrGDS seem to consistently perform better than the gamma variants.~\looseness=-1}
+% \end{figure*}
+
+
+
+\begin{figure*}[t]
+\centering
+\subfigure[\footnotesize Matrix results.]
+{\label{fig:matrices}\includegraphics[width=0.68\linewidth]{../../results/matrices/new_matrix_results.pdf}}\hfill
+% 
+\subfigure[Tensor results.]
+{\label{fig:tensors}\includegraphics[width=0.315\linewidth]{../../results/tensors/new_tensor_results.pdf}}
+\caption{}
+\end{figure*}
+
+
 In the following series of experiments we compare variants of the PrGDS to each other and existing baselines on their smoothing (i.e., imputing heldout data in the observed time window) and forecasting (i.e., predicting future data). To measure performance, we calculate log perplexity of the non-zero heldout elements $y^{\mathsmaller{(\textrm{test})}}_n \!>\! 0$,~\looseness=-1
 % We perform heldout prediction. We calculate perplexity. This is a function of the non-zeros that is related to the posterior predictive. 
 \begin{equation}
 \label{eq:perplexity}
-\log \textrm{Perp}(Y^{\mathsmaller{(\textrm{test})}}) = \frac{1}{N}\sum_{n=1}^N \log \left(\frac{1}{S}\sum_{s=1}^S \textrm{Pois}\left(y^{\mathsmaller{(\textrm{test})}}_n; \mu_n^{(s)}\right) \right)
+\log \textrm{Perp}(\Delta) = \frac{1}{|\Delta|}\sum_{\osubs \in \Delta}^N \log \Big[\frac{1}{S}\sum_{s=1}^S \textrm{Pois}\big(\yd; \mu_{\osubs}^{(s)}\big) \Big]
 \end{equation}
 where $S$ is the number of MCMC samples and $\mu_n^{\mathsmaller{(s)}}$ is the Poisson rate of the heldout count as defined by the $s^{\textrm{th}}$ sample of model parameters.
 
@@ -328,6 +359,31 @@ where $S$ is the number of MCMC samples and $\mu_n^{\mathsmaller{(s)}}$ is the P
 \paragraph{Experimental design.} We replicate the experiments reported by Schein et al.~(2016)
 ~\cite{schein2016poisson} and apply variants of the PrGDS to the same data sets of dynamic count matrices $Y$ each of size $T \ttimes V$. These include matrices derived from two international event data sets---i.e., GDELT \cite{leetaru2013gdelt} and ICEWS \cite{boscheeicews}---and three text corpora---i.e., NeurIPS papers~\cite{neuripscorpus}, DBLP abstracts~\cite{dblp}, and State of the Union (SOTU) speeches~\cite{sotu}. Details about the experimental design (e.g., number of MCMC samples, random masks, etc.) are given by~\cite{schein2016poisson} which we follow exactly for the PrGDS variants. We obtained from the authors the results for PGDS and GP-DPFA~\cite{acharya2015nonparametric} and used them to compute heldout perplexity.~\looseness=-1
 
+% \begin{figure*}[t]
+% \centering
+% \includegraphics[width=0.9\linewidth]{../../results/tensors/monkeybrains/macaque_heat.pdf}
+% \caption{\footnotesize \label{fig:heat} Monkeys~\looseness=-1}
+% \end{figure*}
+
+% \begin{figure*}[t]
+% \centering
+% \includegraphics[width=0.9\linewidth]{../../results/tensors/monkeybrains/macaque_components_eps0.pdf}
+% \caption{\footnotesize \label{fig:components} Monkeys~\looseness=-1}
+% \end{figure*}
+
+
+\begin{figure*}[t]
+\centering
+% 
+\subfigure[\footnotesize Activation vector $\boldsymbol{\theta}_k$ for ten components inferred by PrGDS with$\epstheta  \teq 0$.~\looseness=-1]  
+{\label{fig:components}\includegraphics[width=0.405\linewidth]{../../results/tensors/monkeybrains/macaque_components_eps0.pdf}}\hfill
+% 
+\subfigure[\footnotesize Matrix $\Theta$ inferred by PrGDS with $\epstheta \teq 0$ vs. $\epstheta \teq 1$.]
+{\label{fig:heat}\includegraphics[width=0.58\linewidth]{../../results/tensors/monkeybrains/macaque_heat.pdf}}
+% 
+\caption{\label{fig:macaque} \footnotesize Two views of $\Theta$.~\looseness=-1}
+\end{figure*}
+
 
 \begin{figure*}[t]
 \centering
@@ -336,11 +392,7 @@ where $S$ is the number of MCMC samples and $\mu_n^{\mathsmaller{(s)}}$ is the P
 \end{figure*}
 
 \paragraph{Results.} See \cref{fig:matrix_results}.
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\linewidth]{../../results/matrices/new_matrix_results.pdf}
-\caption{\footnotesize \label{fig:matrix_results}Results for the experiments described by Schein~(2016)~\cite{schein2016poisson} for dynamic count matrices. Performance is measured by log perplexity---\emph{lower} is better, see \cref{eq:perplexity}. The top vs.\ bottom rows report smoothing vs.\ forecasting performance for each model, across data sets (columns). In each plot, the baselines are in red (PGDS) and orange (GP-DPFA) while the eight variants of the PrGDS are defined by a combination of color and hatch: i.e., blue vs.\ gamma denotes Dirichlet vs.\ gamma priors, open and closed circles denote $\epstheta \teq 0$ and $\epslambda \teq 0$, respectively, while slanted and straight lines denote $\epstheta \teq 1$ and $\epslambda \teq 1$, respectively. A clear takeaway is the superiority of sparse variant $\epstheta \teq 0$ to the non-sparse one $\epstheta \teq 1$.}
-\end{figure*}
+
 \subsection{Sequentially observed tensors}
 \paragraph{Experimental design.} For each tensor, we randomly select three pairs of adjacent time steps in the range $[2, T\tm 2]$ to completely hold out---this yields six heldout slices of the tensor $(\Yten^{\mathsmaller(t_1)},\Yten^{\mathsmaller(t_1 \tp 1)}, \Yten^{\mathsmaller(t_2)}, \Yten^{\mathsmaller(t_2 \tp 1)}, \Yten^{\mathsmaller(t_3)}, \Yten^{\mathsmaller(t_3 \tp 1)})$. Additionally, we always hold out the last two slices $(\Yten^{\mathsmaller(T \tm 1)}, \Yten^{\mathsmaller(T)})$. For each data set, we randomly generate two heldout data sets. For each model we run two independent chains of $4,000$ MCMC iterations on each data set and mask combination, saving every $100^{\textrm{th}}$ sample after the first 1,000 to compute log perplexity (as in \cref{eq:perplexity}) on the six intermediate slices (smoothing) and the last two (forecasting).
 
@@ -350,17 +402,13 @@ We also consider data of multielectrode recordings of macaque motor cortex from 
 
 \paragraph{Results.} See \cref{fig:tensor_results}. We also provide an exploratory analysis of inferred latent structure in \cref{fig:sudan}.
 
-\begin{figure*}[h]
-\centering
-\includegraphics[width=0.75\linewidth]{../../results/tensors/new_tensor_results.pdf}
-\caption{\footnotesize\label{fig:tensor_results} Results for the experiments on dynamic count tensors. See the caption of \cref{fig:matrix_results} for description of the legend. Performance is measured by log perplexity where lower is better. Note that the log perplexity scores are negative for the macaque data. One takeaway is that the Dirichlet variants of the PrGDS seem to consistently perform better than the gamma variants.~\looseness=-1}
-\end{figure*}
 
 
-
-
-
-% \section{Discussion}
+\section{Discussion}
+\begin{itemize}
+\item $\epstheta = 0$ is better as suggested by \cref{eq:expectation}. 
+\item 
+\end{itemize}
 % \label{sec:conc}
 
 \bibliographystyle{unsrt}
