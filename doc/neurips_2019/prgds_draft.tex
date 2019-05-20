@@ -99,7 +99,7 @@ In recent years, Poisson factorization has emerged as general framework for mode
 % 
 \subfigure[Poisson-randomized gamma dynamical systems]
 {\label{fig:prgds}\includegraphics[width=0.49\linewidth]{../../fig/graphical_models/prgds.pdf}}
-\caption{\label{fig:comparison} \footnotesize \emph{Left}: The PGDS imposes dependencies directly between the continuous variables that do not yield closed-form conditional distributions. \emph{Right}: The PrGDS (this paper) breaks the intractable dependencies with discrete Poisson variables---doing so yields closed-form conditionals for all variables with any data augmentation.~\looseness=-1}\vspace{-1.5em}
+\caption{\label{fig:comparison} \footnotesize \emph{Left}: The PGDS imposes dependencies directly between the continuous variables that do not yield closed-form conditional distributions. \emph{Right}: The PrGDS (this paper) breaks the intractable dependencies with discrete Poisson variables---doing so yields closed-form conditionals for all variables without any data augmentation.~\looseness=-1}\vspace{-1.5em}
 \end{figure*}
 
 This paper seeks to fill a gap in the literature between Poisson factorization models that are \emph{tractable}---i.e., those that yield closed-form complete conditionals---and those that are \emph{expressive}---i.e., capable of capturing a variety of complex dependence structures. To do so, we introduce a fundamentally new modeling motif---an alternating series of discrete Poisson and continuous gamma latent variables---that is analytically convenient, computationally tractable, and widely applicable. We rely on this motif to construct the Poisson-randomized gamma dynamical system (PrGDS), a model for sequentially observed count tensors. Under a specific hyperparameter setting, the continuous latent states of the PrGDS may take values of \emph{exactly} zero thus encoding a strong inductive bias towards sparsity and burstiness. We find that this variant is uniquely capable of inferring latent structure that is highly localized in time. The PrGDS is closely related to the Poisson--gamma dynamical system (PGDS) \cite{schein2016poisson}. We detail the connection between the two models by representing the PrGDS in terms of the \emph{randomized gamma distribution of the first type} (RG1)~\cite{yuan2000bessel,makarov2010exact}. We also discuss how the PGDS is fundamentally limited by the auxiliary variable scheme it requires to perform inference in its non-conjugate structure. By contrast, without any data augmentation, the PrGDS admits closed-form complete conditionals for all latent variables by way of the little-known Bessel distribution~\cite{yuan2000bessel} and a novel univariate discrete distribution that we derive and call the \emph{size-biased confluent hypergeometric (SCH) distribution}. We compare the smoothing and forecasting ability of the PrGDS to the PGDS and two other baselines on a range of real-world count matrices and tensors of text, international events, and neural spike data. In addition to being uniquely capable of inferring highly localized latent structure, we find that the sparse PrGDS variant often obtains the lowest smoothing and forecasting perplexity of all models.~\looseness=-1
@@ -108,14 +108,14 @@ This paper seeks to fill a gap in the literature between Poisson factorization m
 \section{Poisson-randomized gamma dynamical systems (PrGDS)}
 \label{sec:prgds}
 
-\paragraph{Notation.}Consider a data set of of sequentially observed tensors $\boldsymbol{Y}^{\mathsmaller{(1)}},\dots,\boldsymbol{Y}^{\mathsmaller{(T)}}$. An entry $\ydt \!\in\! \{0,1,2,\dots\}$ in the $t^{\textrm{th}}$ tensor is subscripted by a multi-index $\osubs \equiv (\osub_1,\dots,\osub_M)$ which indexes into the $M$ modes of the tensor. As an example, international event counts $y^{\mathsmaller{(t)}}_{\mathsmaller{i \xrightarrow{a} j}}$ collectively form a sequence of 3-mode count tensors where each multi-index corresponds to a unique combination of sender, receiver, and action type---e.g., $\osubs = (i, j, a)$.
+\textbf{Notation.} Consider a data set of of sequentially observed tensors $\boldsymbol{Y}^{\mathsmaller{(1)}},\dots,\boldsymbol{Y}^{\mathsmaller{(T)}}$. An entry $\ydt \!\in\! \{0,1,2,\dots\}$ in the $t^{\textrm{th}}$ tensor is subscripted by a multi-index $\osubs \equiv (\osub_1,\dots,\osub_M)$ which indexes into the $M$ modes of the tensor. As an example, international event counts $y^{\mathsmaller{(t)}}_{\mathsmaller{i \xrightarrow{a} j}}$ collectively form a sequence of 3-mode count tensors where each multi-index corresponds to a unique combination of sender, receiver, and action type---e.g., $\osubs = (i, j, a)$.
 
-\paragraph{Generative process.} The PrGDS is a form of CP decomposition \cite{harshman1970foundations} that models $\yd$ as
+\textbf{Generative process.} The PrGDS is a form of CP decomposition \cite{harshman1970foundations} that models $\yd$ as
 \begin{align}
 \label{eq:tensor_likelihood}
 \ydt &\sim \textrm{Pois}\Big(\rhot \sum_{k = 1}^K \lambda_k \, \thetakt \prod_{m=1}^M \phi^{\mathsmaller{(m)}}_{k \osub_m}\Big).
 \end{align}
-Here $\thetakt$ represents the strength of the $k^{\textrm{th}}$ latent \emph{component} at time step $t$. Each component describes a particular dependence structure in the data by way of a factor vector $\boldsymbol{\phi}^{\mathsmaller{(m)}}_{k}$ for each mode $m$. For international events data, the first factor vector $\boldsymbol{\phi}^{\mathsmaller{(1)}}_{k} \teq (\phi^{\mathsmaller{(1)}}_{k1},\dots,\phi^{\mathsmaller{(1)}}_{kV})$ would describe the rate at which each of the $V$ countries acts as a sender in the $k^{\textrm{th}}$ component while the second $\boldsymbol{\phi}^{\mathsmaller{(2)}}_{k}$ would describe the rate at which each acts as a receiver. The weights $\lambda_k$ and $\rho^{\mathsmaller{(t)}}$ represent the overall strengths of component $k$ and time step $t$. We call the PrGDS \emph{stationary} if $\rhot \teq \rho$. We assume conjugate gamma and Dirichlet priors over $\rho^{\mathsmaller{(t)}}$ (or $\rho$) and $\boldsymbol{\phi}^{\mathsmaller{(m)}}_{k}$:~\looseness=-1
+Here $\thetakt$ represents the activation of the $k^{\textrm{th}}$ \emph{component} at time step $t$. Each component describes a dependence structure in the data by way of a factor vector $\boldsymbol{\phi}^{\mathsmaller{(m)}}_{k}$ for each mode $m$. For international events data, the first factor vector $\boldsymbol{\phi}^{\mathsmaller{(1)}}_{k} \teq (\phi^{\mathsmaller{(1)}}_{k1},\dots,\phi^{\mathsmaller{(1)}}_{kV})$ would describe the rate at which each of the $V$ countries acts as a sender in the $k^{\textrm{th}}$ component while the second $\boldsymbol{\phi}^{\mathsmaller{(2)}}_{k}$ would describe the rate at which each acts as a receiver. The weights $\lambda_k$ and $\rho^{\mathsmaller{(t)}}$ represent the overall scale of component $k$ and time step $t$. The PrGDS is called \emph{stationary} if $\rhot \teq \rho$. We assume the following conjugate priors:~\looseness=-1
 % there is a set of factors $\phi^{\mathsmaller{(m)}}_{k \osub_m}$ for each mode $m$ that represents the strength of feature $i_{m}$ in component $k$. An analogous generalization can be made of the PGDS. However, as before, the ``augment-and-conquer'' inference is only available if $\lambda_k=\lambda$ and $\sum_{i_m=1}^{L_m} \phi^{\mathsmaller{(m)}}_{k \osub_m} \teq 1$ for all $m$. A secondary contribution of this paper is the generalization of the PGDS to tensor-valued time series which we use in \cref{sec:experiments} as a baseline. We provide the relevant inference equations in the Appendix and will open source our Cython implementation.
 \begin{equation}
 \rhot \sim \Gam{a_0, b_0} \,\,\,\textrm{ and }\,\,\, \boldsymbol{\phi}^{\mathsmaller{(m)}}_k \sim \textrm{Dir}(a_0,\dots,a_0).
@@ -145,7 +145,7 @@ where $\epslambda$ is a hyperparameter analogous to $\epstheta$. The following g
 \begin{equation}
 \gamma \sim \Gam{a_0,b_0} \,\,\,\textrm{ and }\,\,\, \beta \sim \Gam{\alpha_0, \alpha_0}.
 \end{equation}
-\paragraph{Properties.}
+\textbf{Properties.}
 Both $\epslambda$ and $\gamma$ are divided by the number of components $K$ in \cref{eq:lambdakandgk}---as the number of components grows $K \!\rightarrow\! \infty$, the expected sum of the weights thus remains finite and fixed:~\looseness=-1
 \begin{equation}
 \sum_{k=1}^\infty \E{\lambda_k} = \sum_{k=1}^\infty \big(\tfrac{\epslambda}{K} + \E{g_k}\big) \beta^{-1} = \sum_{k=1}^\infty \big(\tfrac{\epslambda}{K} + \tfrac{\gamma}{K} \big)\beta^{-1} = \big(\epslambda + \gamma \big)\beta^{-1}.
@@ -161,6 +161,7 @@ since by iterated expectation $\E{\thetakt} \teq \big(\epstheta \tp \E{\hkt}\big
 
 More generally, we can marginalize out all of the discrete latent states $\hkt$ to obtain a purely continuous dynamical system in terms of the \emph{randomized gamma distribution of the first type} (RG1) \cite{yuan2000bessel,makarov2010exact},~\looseness=-1
 \begin{equation}
+\label{eq:rg1}
 \
 \thetakt \sim \textrm{RG1}\Big(\epstheta,\,\tau\sum_{k_2=1}^K \pi_{kk_2} \thetakttm,\, \tau\Big),
 % 
@@ -276,13 +277,13 @@ where SCH is a novel univariate discrete distribution we call the \emph{size-bia
 % \hspace{0.5em}
 \subfigure[\footnotesize Size-biased confluent hypergeometric distribution]
 {\label{fig:sch}\includegraphics[width=0.5\linewidth]{../../fig/distributions/annotated_sch.pdf}}\vspace{-0.5em}
-\caption{\footnotesize \label{fig:distributions} Two discrete distributions that arise as posteriors in Poisson--gamma--Poisson recursions.~\looseness=-1}
+\caption{\footnotesize \label{fig:distributions} Two discrete distributions that arise as posteriors in Poisson--gamma--Poisson recursions.~\looseness=-1}\vspace{-1em}
 \end{figure*}
 
-\subsection{Closed-form complete conditionals for PrGDS}
+\subsection{Closed-form complete conditionals for the PrGDS}
 The PrGDS yields a latent source representation (see \cref{eq:thinning})---posterior inference thus begins with
 \begin{align}
-\compcond{(y^{\mathsmaller{(t)}}_{\osubs k})_{k=1}^K} &\sim \Multi{\ydt,\big(\lambda_k \, \thetakt \mathsmaller{\prod}_{m=1}^M \phimki\big)_{k=1}^K},
+\compcond{(y^{\mathsmaller{(t)}}_{\osubs k})_{k=1}^K} &\sim \Multi{\ydt,\big(\lambda_k \, \thetakt \mathsmaller{\prod}_{m=1}^M \phimki\big)_{k=1}^K}.
 \intertext{We may similarly represent $\hkt$ under its latent source representation as $\hkt \tequiv \hkdt \teq \sum_{k_2=1}^K \hkkt$ where $\hkkt \tsim \Pois{\tau \, \pi_{kk_2} \thetakttm}$. When useful, we use dot-notation to denote summing over an axis---in this case $\hkdt$ denotes the sum of the $k^{\textrm{th}}$ row of the $K \ttimes K$ matrix of latent counts $\hkkt$. The complete conditional of the $k^{\textrm{th}}$ row of counts, when conditioned on their sum $\hkdt$, is~\looseness=-1}
 % 
 \compcond{(\hkkt)_{k_2=1}^K} &\sim \Multi{\hkdt,\,(\pi_{kk_2} \thetakttm)_{k_2=1}^K}.
@@ -314,103 +315,83 @@ The conditionals for $\lambda_k$ and $g_k$ follow from applying the same Poisson
 
 \section{Experiments}
 \label{sec:experiments}
-
-\begin{itemize}
-  \item Evaluation: smoothing, forecasting, perplexity
-  \item Baselines: Matrices: PGDS, GP-DPFA, BPTF. Tensors PGDS (our implementation), BPTF.
-  \item 
-\end{itemize}
-% \begin{figure*}[t]
-% \centering
-% \includegraphics[width=0.75\linewidth]{../../results/matrices/new_matrix_results.pdf}
-% \caption{\footnotesize \label{fig:matrix_results}Results for the experiments described by Schein~(2016)~\cite{schein2016poisson} for dynamic count matrices. Performance is measured by log perplexity---\emph{lower} is better, see \cref{eq:perplexity}. The top vs.\ bottom rows report smoothing vs.\ forecasting performance for each model, across data sets (columns). In each plot, the baselines are in red (PGDS) and orange (GP-DPFA) while the eight variants of the PrGDS are defined by a combination of color and hatch: i.e., blue vs.\ gamma denotes Dirichlet vs.\ gamma priors, open and closed circles denote $\epstheta \teq 0$ and $\epslambda \teq 0$, respectively, while slanted and straight lines denote $\epstheta \teq 1$ and $\epslambda \teq 1$, respectively. A clear takeaway is the superiority of sparse variant $\epstheta \teq 0$ to the non-sparse one $\epstheta \teq 1$.}
-% \end{figure*}
-
-% \begin{figure*}[h]
-% \centering
-% \includegraphics[width=0.4\linewidth]{../../results/tensors/new_tensor_results.pdf}
-% \caption{\footnotesize\label{fig:tensor_results} Results for the experiments on dynamic count tensors. See the caption of \cref{fig:matrix_results} for description of the legend. Performance is measured by log perplexity where lower is better. Note that the log perplexity scores are negative for the macaque data. One takeaway is that the Dirichlet variants of the PrGDS seem to consistently perform better than the gamma variants.~\looseness=-1}
-% \end{figure*}
-
-
-
 \begin{figure*}[t]
 \centering
-\subfigure[\footnotesize Matrix results.]
-{\label{fig:matrices}\includegraphics[width=0.68\linewidth]{../../results/matrices/new_matrix_results.pdf}}\hfill
+\subfigure[\footnotesize Matrix experiments (originally described by Schein et al.~\cite{schein2016poisson}).]
+{\label{fig:matrix_results}\includegraphics[width=0.68\linewidth]{../../results/matrices/new_matrix_results.pdf}}\hfill
 % 
-\subfigure[Tensor results.]
-{\label{fig:tensors}\includegraphics[width=0.315\linewidth]{../../results/tensors/new_tensor_results.pdf}}
-\caption{}
+\subfigure[Tensor experiments.]
+{\label{fig:tensor_results}\includegraphics[width=0.315\linewidth]{../../results/tensors/new_tensor_results.pdf}}\vspace{-0.5em}
+\caption{\label{fig:experiments}\footnotesize The smoothing (top row) and forecasting (bottom row) performance of each model is measured by its decrease in log-perplexity relative to BPTF---\emph{lower is better}. \textcolor{blue}{TODO: Matrix results not yet relative to BPTF.}~\looseness=-1}\vspace{-2em}
 \end{figure*}
 
+Thus far, we've seen how the Poisson--gamma--Poisson motif of the PrGDS (see \cref{sec:recursion}) yields a more tractable (see \cref{fig:comparison}) and more flexible (see \cref{sec:bg}) model family than previous work. This motif also encodes a unique inductive bias that we experimentally test by comparing the PrGDS to the Poisson--gamma dynamical system (PGDS) \cite{schein2016poisson}. The PGDS is the pure gamma analog to the PrGDS, as we see by comparing \cref{eq:rg1,eq:pgds}---comparing these models thus isolates the impact of the Poisson--gamma--Poisson motif. The PGDS was only previously introduced to model a $T \ttimes V$  \emph{matrix} $Y$ of sequentially observed $V$-dimensional vectors $\boldsymbol{y}^{\mathsmaller{(1)}},\dots, \boldsymbol{y}^{\mathsmaller{(T)}}$. To compare to it, we generalize the PGDS to $M$-mode tensors. We will open-source our Cython implementation of the generalized PGDS (in addition to the PrGDS) and derive its complete conditionals in the Appendix. We also compare the PrGDS variant with $\epstheta \teq 1$ to the one with $\epstheta \teq 0$, which permits \emph{sparse activations} $\thetakt \teq 0$.~\looseness=-1
 
-In the following series of experiments we compare variants of the PrGDS to each other and existing baselines on their smoothing (i.e., imputing heldout data in the observed time window) and forecasting (i.e., predicting future data). To measure performance, we calculate log perplexity of the non-zero heldout elements $y^{\mathsmaller{(\textrm{test})}}_n \!>\! 0$,~\looseness=-1
-% We perform heldout prediction. We calculate perplexity. This is a function of the non-zeros that is related to the posterior predictive. 
-\begin{equation}
-\label{eq:perplexity}
-\log \textrm{Perp}(\Delta) = \frac{1}{|\Delta|}\sum_{\osubs \in \Delta}^N \log \Big[\frac{1}{S}\sum_{s=1}^S \textrm{Pois}\big(\yd; \mu_{\osubs}^{(s)}\big) \Big]
-\end{equation}
-where $S$ is the number of MCMC samples and $\mu_n^{\mathsmaller{(s)}}$ is the Poisson rate of the heldout count as defined by the $s^{\textrm{th}}$ sample of model parameters.
+\textbf{Experimental design.} All experiments have the following design: for some data set $\Yten^{\mathsmaller{(1)}},\dots,\Yten^{\mathsmaller{(T)}}$, all of the counts $\Yten^{\mathsmaller{(t)}}$ at randomly selected time steps $t$ are masked. The last two time steps are also always masked. Each model is fit to the masked data using independent chains of MCMC that impute the missing data each iteration and ultimately return $S$ posterior samples of the latent variables and parameters. The samples are then used to compute the expectations $\mudt$ (as defined in \cref{eq:tensor_likelihood}) of the heldout counts. We distinguish the task of predicting counts in the final time steps when subsequent observed data is unavailable (\emph{forecasting}) from the task of predicting intermediate time steps (\emph{smoothing}). To assess predictive performance we compute log-perplexity as defined---$\log \textrm{Perp}(\Delta) = -\frac{1}{|\Delta|}\sum_{(t,\osubs) \in \Delta} \log \Big[\frac{1}{S}\sum_{s=1}^S \textrm{Pois}\big(\ydt; \musdt \big) \Big]$---where $\Delta$ is the set of multi-indices of the heldout counts and $\musdt$ is the expectation of the heldout count computed from the $s^{\textrm{th}}$ sample. In all experiments, we fit a simple non-dynamic baseline---i.e., Bayesian Poisson tensor factorization (BPTF) \cite{schein2015bayesian}---that assumes the data at different time slices are i.i.d.~$y_{\osubs}^{\mathsmaller{(t)}} \tsim \Pois{\mud}$---this model thus for all heldout time slices this model predicts $\mud$, which it fits from the training data. For the dynamic models, we then report their improvement over non-dynamic BPTF by dividing their perplexity scores by its.~\looseness=-1 
 
-\paragraph{Models.} The PrGDS defines a large model family. In these experiments we compare PrGDS variants with $\epstheta \teq 0$ vs.\ 1,  $\epslambda  \teq 0$ vs.\ 1, and Dirichlet versus gamma priors over the non-dynamic factors $\phi^{\mathsmaller{(m)}}_{k \osub_m}$---the cross product of these different choices yields eight PrGDS variants. In the first set of experiments, we follow the experimental design described by Schein et al.~(2016)~\cite{schein2016poisson} on five different dynamic count matrices. We compare the predictive performance of the PrGDS to the performance of the PGDS and GP-DPFA~\cite{acharya2015nonparametric} as baselines. In the next set of experiments, we compare the PrGDS to our tensor generalization of the PGDS on three different dynamic tensors data sets.~\looseness=-1
+\textbf{Matrix experiments.} We first replicated the experiments on $T\ttimes V$ dynamic \emph{matrices} (i.e., 2-mode tensors) reported by Schein et al.~(2016) \cite{schein2016poisson}. These experiments followed the design described above and compared the PGDS to GP-DPFA \cite{acharya2015nonparametric}, a simple dynamic baseline that we describe in \cref{sec:bg}. The matrices in these experiments are based on three text corpora---NeurIPS papers~\cite{neuripscorpus}, DBLP abstracts~\cite{dblp}, and State of the Union (SOTU) speeches~\cite{sotu}---where $\yvt$ is the number of times word $v$ occurs in time step $t$, and two international events data sets---GDELT \cite{leetaru2013gdelt} and ICEWS \cite{boscheeicews}---where $\yvt$ is the number of times sender--receiver pair $v$ interacted during time step $t$. We obtained the matrices and random masks along with the original results for both PGDS and GP-DPFA from the authors and ran the PrGDS with the same MCMC settings they describe (see their paper for details \cite{schein2016poisson}) and BTPF (which uses variational inference) on all matrices and masks. We display the results in \cref{fig:matrix_results}.~\looseness=-1
 
-\subsection{Sequentially observed vectors}
-\paragraph{Experimental design.} We replicate the experiments reported by Schein et al.~(2016)
-~\cite{schein2016poisson} and apply variants of the PrGDS to the same data sets of dynamic count matrices $Y$ each of size $T \ttimes V$. These include matrices derived from two international event data sets---i.e., GDELT \cite{leetaru2013gdelt} and ICEWS \cite{boscheeicews}---and three text corpora---i.e., NeurIPS papers~\cite{neuripscorpus}, DBLP abstracts~\cite{dblp}, and State of the Union (SOTU) speeches~\cite{sotu}. Details about the experimental design (e.g., number of MCMC samples, random masks, etc.) are given by~\cite{schein2016poisson} which we follow exactly for the PrGDS variants. We obtained from the authors the results for PGDS and GP-DPFA~\cite{acharya2015nonparametric} and used them to compute heldout perplexity.~\looseness=-1
+\textbf{Tensor experiments.} We obtained tensor data from two international events data sets---GDELT and ICEWS---wherein a count $y_{\mathsmaller{i \xrightarrow{a}j}}^{\mathsmaller{(t)}}$ is the number of times country $i$ took action $a$ towards country $j$ during time step $t$. These counts form a sequence of 3-mode tensors of size $V \ttimes V \ttimes A$ for $V \teq 249$ countries and $A \teq 20$ actions. For both data sets, we treat months as time steps, where for GDELT we consider the date range 2003--2008 (thus, $T \teq 72$) and for ICEWS we consider 1995--2013 ($T \teq 228$). 
 
-% \begin{figure*}[t]
-% \centering
-% \includegraphics[width=0.9\linewidth]{../../results/tensors/monkeybrains/macaque_heat.pdf}
-% \caption{\footnotesize \label{fig:heat} Monkeys~\looseness=-1}
-% \end{figure*}
+We also obtained neuroscience data of multielectrode recordings of macaque monkey motor cortices from Williams et al.~(2018)~\cite{williams2018unsupervised}. In this data, a count $y^{\mathsmaller{(t)}}_{ij}$ is the number of times neuron $i$ fired in trial $j$ during time step $t$. These counts form a sequence of matrices each of size $N \ttimes S$ where $N \teq 100$ is the number of neurons and $S \teq 1,716$ is the number of trials. We consider each time step to be a 20 millisecond interval which yields $T \teq 162$. See \cref{fig:tensor_results}. 
 
-% \begin{figure*}[t]
-% \centering
-% \includegraphics[width=0.9\linewidth]{../../results/tensors/monkeybrains/macaque_components_eps0.pdf}
-% \caption{\footnotesize \label{fig:components} Monkeys~\looseness=-1}
-% \end{figure*}
-
+For each of the three tensors, we randomly generated two masks that each holdout three pairs of adjacent time steps in the range $t \in [2, T\tm 2]$ as well as the last two time steps $T\tm 1, T$. For each dynamic model, mask, and tensor, we run two independent chains of $4,000$ MCMC iterations, saving every $100^{\textrm{th}}$ sample after the first 1,000 to compute heldout log-perplexity; we then also fit BPTF and report the relative improvement over it for the dynamic models in \cref{fig:tensor_results}.
 
 \begin{figure*}[t]
 \centering
 % 
-\subfigure[\footnotesize Activation vector $\boldsymbol{\theta}_k$ for ten components inferred by PrGDS with$\epstheta  \teq 0$.~\looseness=-1]  
-{\label{fig:components}\includegraphics[width=0.405\linewidth]{../../results/tensors/monkeybrains/macaque_components_eps0.pdf}}\hfill
+\subfigure[\footnotesize Latent activation structure inferred from macaque cortex data by the PrGDS. \emph{Right:} Comparison of the $K \ttimes T$ state matrix $\Theta$ inferred by the two PrGDS variants: $\epstheta \teq 0$ (sparse) vs. $\epstheta \teq 1$. The components $k$ are sorted by which time step $t$ had the largest $\thetakt$. The banded structure suggests both infer components that activate within specific short durations. White cells correspond to zeros $\thetakt\teq 0$---the PrGDS can only represent sparse activation structure when $\epstheta \teq 0$. \emph{Left:} Alternative visualization of the ten sparsest rows of the matrix $\boldsymbol{\theta}_k$. Each is a component's $T$-length activation vector---they collectively depict localized and ``bursty'' neuronal spiking.~\looseness=-1]  
+{
+\label{fig:macaque}
+\includegraphics[width=0.49\linewidth]{../../results/tensors/monkeybrains/macaque_components_eps0.pdf}
+\includegraphics[width=0.49\linewidth]{../../results/tensors/monkeybrains/macaque_heat.pdf}
+}\hfill
 % 
-\subfigure[\footnotesize Matrix $\Theta$ inferred by PrGDS with $\epstheta \teq 0$ vs. $\epstheta \teq 1$.]
-{\label{fig:heat}\includegraphics[width=0.58\linewidth]{../../results/tensors/monkeybrains/macaque_heat.pdf}}
 % 
-\caption{\label{fig:macaque} \footnotesize Two views of $\Theta$.~\looseness=-1}
+\subfigure[\footnotesize A component inferred by the sparse PrGDS from ICEWS data is specific to South Sudan, a country that did not exist until July 2011. Neither the non-sparse PrGDS variant nor the PGDS inferred such a component. We speculate that its strong inductive bias towards sparsity allows this variant to infer highly localized structure. \emph{Top:} The activation vector is sparse $\thetakt \teq 0$ at 94\% of the time steps (months) prior to July 2011. \emph{Bottom left and middle:} The factor vectors for the first two modes are dominated by South Sudan and Sudan.~\looseness=-1]
+{
+\label{fig:sudan}
+\includegraphics[width=\linewidth]{../../fig/components/icews/zero-ordering/new_plots/eps0-component-0.pdf}
+}
+% 
+\caption{\label{fig:exploratory} Sparse representations of macaque cortex activity (\cref{fig:macaque}) and ICEWS events (\cref{fig:sudan}).}
 \end{figure*}
-
-
-\begin{figure*}[t]
-\centering
-\includegraphics[width=0.9\linewidth]{../../fig/components/icews/zero-ordering/new_plots/eps0-component-0.pdf}
-\caption{\footnotesize \label{fig:sudan} A variant of the PrGDS is capable of inferring true sparsity in its continuous latent states. When fit to dynamic tensor data of country--country interactions, this variant inferred the following component. \emph{Top row:} 94\% of the time steps (months) prior to July 2011 exhibit an inferred latent state value of exactly zero $\thetakt \teq 0$. \emph{Bottom left and middle:} This component mainly summarizes events involving South Sudan, a country that did not exist until July 2011. No other variant of the PrGDS found a component dedicated to South Sudan; we speculate that the sparse variant's unique inductive bias allows it surface patterns in the data that are highly localized in time.~\looseness=-1}
-\end{figure*}
-
-\paragraph{Results.} See \cref{fig:matrix_results}.
-
-\subsection{Sequentially observed tensors}
-\paragraph{Experimental design.} For each tensor, we randomly select three pairs of adjacent time steps in the range $[2, T\tm 2]$ to completely hold out---this yields six heldout slices of the tensor $(\Yten^{\mathsmaller(t_1)},\Yten^{\mathsmaller(t_1 \tp 1)}, \Yten^{\mathsmaller(t_2)}, \Yten^{\mathsmaller(t_2 \tp 1)}, \Yten^{\mathsmaller(t_3)}, \Yten^{\mathsmaller(t_3 \tp 1)})$. Additionally, we always hold out the last two slices $(\Yten^{\mathsmaller(T \tm 1)}, \Yten^{\mathsmaller(T)})$. For each data set, we randomly generate two heldout data sets. For each model we run two independent chains of $4,000$ MCMC iterations on each data set and mask combination, saving every $100^{\textrm{th}}$ sample after the first 1,000 to compute log perplexity (as in \cref{eq:perplexity}) on the six intermediate slices (smoothing) and the last two (forecasting).
-
-\paragraph{Data sets.} We created two tensors of international event counts from GDELT~\cite{leetaru2013gdelt} and ICEWS~\cite{boscheeicews}. An entry in one of these tensors contains the count $y_{\mathsmaller{i \xrightarrow{a} j} }^{\mathsmaller{(t)}}$ of how many times country $i$ took action $a$ to country $j$ in time step $t$---each tensor is thus of size $T \ttimes V \ttimes V \ttimes A$ where $V \teq 249$ is the number of countries and $A \teq 20$ is the number of action types. Both tensors treat months as time steps---the GDELT considers the date range 2003--2008 ($T \teq 72$) while the ICEWS tensor considers 1995--2013 ($T \teq 228$).~\looseness=-1
-
-We also consider data of multielectrode recordings of macaque motor cortex from Williams et al.~(2018)~\cite{williams2018unsupervised}. A count in this tensor $y^{\mathsmaller{(t)}}_{ij}$ is number of times neuron $i$ fired in time step $t$ during trial $j$. This tensor is thus size $T \ttimes N \ttimes S$ where $T \teq 162$ is the number of time steps, $N \teq 100$ is the number of recorded neurons, and $S \teq 1,716$ trials.
-
-\paragraph{Results.} See \cref{fig:tensor_results}. We also provide an exploratory analysis of inferred latent structure in \cref{fig:sudan}.
-
-
 
 \section{Discussion}
-\begin{itemize}
-\item $\epstheta = 0$ is better as suggested by \cref{eq:expectation}. 
-\item 
-\end{itemize}
-% \label{sec:conc}
+The sparse PrGDS ($\epstheta \teq 0$) obtained the lowest perplexity of all models in nine out of the 14 experiments (i.e., subplots in \cref{fig:experiments}) and lower perplexity than the PGDS in 11. In only three experiments did the non-sparse PrGDS ($\epstheta \teq 1$) perform better. The expectation for future states $\boldsymbol{\theta}^{\mathsmaller{(t)}}$ given in \cref{eq:expectation} is perhaps an explanation---when $\epstheta \!>\! 0$ that expectation has an additive bias term which compounds as we forecast further ahead. The expectation matches the analogous one for the PGDS, given in \cref{eq:pgds}, only when $\epstheta \teq 0$. Beyond providing a superior inductive bias, the sparse variant encodes a qualitatively different representation than the non-sparse variant or PGDS. In \cref{fig:macaque} and \cref{fig:sudan} we explore some of the sparse latent structure inferred by the PrGDS from the macaque cortex data and the ICEWS event data. In the Appendix, provide examples of how we aligned components across models and provide examples of some well-aligned ones. We found that all models inferred qualitatively similar components---however, a small number of components were unique to the sparse PrGDS. We give one such example in \cref{fig:sudan}.
 
+\vfill
+\section{Conclusion} A novel modeling motif---Poisson--gamma--Poisson recursions---allows us to construct the PrGDS, a tractable and flexible model family for sequentially observed count tensors. A variant of the PrGDS permits a truly sparse latent representation that is both qualitatively appealing and provides a natural inductive bias for sparse and ``bursty'' count time series.
+
+% \begin{figure*}[t]
+% \centering
+% % 
+% \subfigure[\footnotesize Activation vectors $\boldsymbol{\theta}_k$ inferred by the sparse PrGDS.~\looseness=-1]  
+% {\label{fig:components}\includegraphics[width=0.49\linewidth]{../../results/tensors/monkeybrains/macaque_components_eps0.pdf}}\hfill
+% % 
+% \subfigure[\footnotesize The full matrix $\Theta$ inferred by both PrGDS variants.~\looseness=-1]
+% {\label{fig:heat}\includegraphics[width=0.49\linewidth]{../../results/tensors/monkeybrains/macaque_heat.pdf}} \vspace{-0.5em}
+% % 
+% \caption{\label{fig:macaque} \footnotesize Two views of $\Theta$ inferred on Macaque tensor data. \cref{fig:heat} compares the $K \ttimes T$ state matrix inferred by the two PrGDS variants: $\epstheta \teq 0$ (sparse) vs. $\epstheta \teq 1$. The components $k$ are sorted according to which time step $t$ had the largest $\thetakt$---the visible banded structure suggests they both infer components that activate within specific short durations. White cells correspond to exact zeros $\thetakt\teq 0$---the PrGDS can represent truly sparse activation structure when $\epstheta \teq 0$. The $k^{\textrm{th}}$ row $\boldsymbol{\theta}_k$ is the $T$-length activation vector for component $k$---\cref{fig:components} provides an alternative visualization for ten of the sparssest activation vectors inferred by the sparse PrGDS. They collectively depict temporally localized and ``bursty'' neuronal spiking dynamics in accordance with neuroscientific accounts.~\looseness=-1}
+% \end{figure*}
+
+
+% \begin{figure*}[b]
+% \centering
+% \includegraphics[width=\linewidth]{../../fig/components/icews/zero-ordering/new_plots/eps0-component-0.pdf}
+% \caption{\footnotesize \label{fig:sudan} A variant of the PrGDS is capable of inferring true sparsity in its continuous latent states. When fit to dynamic tensor data of country--country interactions, this variant inferred the following component. \emph{Top row:} 94\% of the time steps (months) prior to July 2011 exhibit an inferred latent state value of exactly zero $\thetakt \teq 0$. \emph{Bottom left and middle:} This component mainly summarizes events involving South Sudan, a country that did not exist until July 2011. No other variant of the PrGDS found a component dedicated to South Sudan; we speculate that the sparse variant's unique inductive bias allows it surface patterns in the data that are highly localized in time.~\looseness=-1}
+% \end{figure*}
+
+
+
+
+% \section{Discussion}
+% \begin{itemize}
+% \item $\epstheta = 0$ is better as suggested by \cref{eq:expectation}. 
+% \item 
+% \end{itemize}
+% \label{sec:conc}
+\pagebreak
 \bibliographystyle{unsrt}
 \bibliography{references}
 
