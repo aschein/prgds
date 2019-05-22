@@ -18,8 +18,12 @@ Poisson-randomized gamma dynamical systems
 * [scikit-learn](https://scikit-learn.org/stable/)
 * [tensorly](http://tensorly.org/stable/index.html)
 
-OSX users will have to install a version of the [GNU Compiler Collection (GCC)](https://gcc.gnu.org/). If using Anaconda:
+OSX users will have to install a version of the [GNU Compiler Collection (GCC)](https://gcc.gnu.org/). If using Anaconda,
 ```
-conda install gcc
+conda install -c anaconda gcc
 ```
-(see the relevant line in [setup.py](src/setup.py))
+and then change the relevant line in [setup.py](src/setup.py). 
+OSX users will also have to install the [GNU Scientific library (GSL)](https://www.gnu.org/software/gsl/doc/html/rng.html). If using Anaconda,
+```
+conda install -c conda-forge gsl
+```
