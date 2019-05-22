@@ -22,7 +22,8 @@ OSX users will have to install a version of the [GNU Compiler Collection (GCC)](
 ```
 conda install -c anaconda gcc
 ```
-and then change the relevant line in [setup.py](src/setup.py). 
+and then change the relevant line in [setup.py](src/setup.py). OSX users may run into issues  compiling on MacOS 10.14 or greater which can be fixed by following the solutions in [this thread](https://stackoverflow.com/questions/52509602/cant-compile-c-program-on-a-mac-after-upgrade-to-mojave).
+
 OSX users will also have to install the [GNU Scientific library (GSL)](https://www.gnu.org/software/gsl/doc/html/rng.html). If using Anaconda,
 ```
 conda install -c conda-forge gsl
