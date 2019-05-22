@@ -18,4 +18,4 @@ Poisson-randomized gamma dynamical systems
 * [scikit-learn](https://scikit-learn.org/stable/)
 * [tensorly](http://tensorly.org/stable/index.html)
 
-OSX users will have to install [setup.py](setup.py)
+OSX users will have to install (see the relevant line in [setup.py](src/setup.py))
