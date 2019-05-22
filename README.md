@@ -11,9 +11,10 @@ Poisson-randomized gamma dynamical systems
 
 ## Dependencies:
 
+* Cython
 * argparse
 * numpy
-* path
+* [path](https://anaconda.org/anaconda/path.py)
 * pickle
 * scikit-learn
-* scikit-tensor
+* tensorly
