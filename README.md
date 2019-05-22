@@ -17,3 +17,5 @@ Poisson-randomized gamma dynamical systems
 * [path](https://anaconda.org/anaconda/path.py)
 * [scikit-learn](https://scikit-learn.org/stable/)
 * [tensorly](http://tensorly.org/stable/index.html)
+
+OSX users will have to install [setup.py](setup.py)
