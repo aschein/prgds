@@ -10,11 +10,10 @@ Poisson-randomized gamma dynamical systems
 * [prgds.pyx](src/apf/models/prgds.pyx): Poisson-randomized gamma dynamical systems (PrGDS).
 
 ## Dependencies:
-
-* Cython
-* argparse
-* numpy
+* [cython](https://cython.org/)
+* [numpy](https://www.numpy.org/)
+* [scipy](https://www.scipy.org/)
+* [pandas](https://pandas.pydata.org/)
 * [path](https://anaconda.org/anaconda/path.py)
-* pickle
-* scikit-learn
-* tensorly
+* [scikit-learn](https://scikit-learn.org/stable/)
+* [tensorly](http://tensorly.org/stable/index.html)
