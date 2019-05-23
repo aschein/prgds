@@ -7,8 +7,8 @@ import numpy.random as rn
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from base.sample import Sampler
-from base.sbch import mean, mode, variance, logpmf_unnorm, logpmf_norm
+from apf.base.sample import Sampler
+from apf.base.sbch import mean, mode, variance, logpmf_unnorm, logpmf_norm
 from IPython import embed
 
 s = Sampler()

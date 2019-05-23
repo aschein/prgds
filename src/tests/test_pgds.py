@@ -1,7 +1,7 @@
 import sys
 from path import Path
 sys.path.append(Path(__file__).parent.parent)
-from models.pgds import PGDS
+from apf.models.pgds import PGDS
 
 import numpy as np
 import numpy.random as rn
