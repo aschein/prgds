@@ -353,7 +353,7 @@ We've seen how the Poisson--gamma--Poisson motif of the PrGDS (see \cref{sec:rec
 
 We also obtained neuroscience data of multielectrode recordings of macaque monkey motor cortices from Williams et al.~(2018)~\cite{williams2018unsupervised}. In this data, a count $y^{\mathsmaller{(t)}}_{ij}$ is the number of times neuron $i$ fired in trial $j$ during time step $t$. These counts form a sequence of matrices each of size $N \ttimes S$ where $N \teq 100$ is the number of neurons and $S \teq 1,716$ is the number of trials. We consider each time step to be a 20 millisecond interval which yields $T \teq 162$. 
 
-For each of the three tensors, we randomly generated two masks that each hold out six time steps in the range $t \in [2, T\tm 2]$ as well as the last two time steps. For each dynamic model, mask, and tensor, we run two independent chains of $4,000$ MCMC iterations, saving every $100^{\textrm{th}}$ sample after the first 1,000 to compute heldout log-perplexity; we then also fit BPTF and report the relative improvement over it by the dynamic models in \cref{fig:tensor_results}.~\looseness=-1
+For each of the three tensors, we randomly generated two masks that each hold out six time steps in the range $t \in [2, T\tm 2]$ as well as the last two time steps. For each dynamic model, mask, and tensor, we ran two independent chains of $4,000$ MCMC iterations, saving every $100^{\textrm{th}}$ sample after the first 1,000 to compute heldout log-perplexity; we then also fit BPTF and report the relative improvement over it by the dynamic models in \cref{fig:tensor_results}. Following Schein et al.~(2016), we set $K \teq 100$ for all models.~\looseness=-1
 
 \begin{figure*}[t]
 \centering
