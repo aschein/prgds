@@ -5,6 +5,7 @@
 % before loading neurips_2019
 
 % ready for submission
+\PassOptionsToPackage{numbers, compress}{natbib}
 \usepackage[final]{neurips_2019}
 
 \input{macros}
@@ -18,7 +19,6 @@
 % to avoid loading the natbib package, add option nonatbib:
 %     \usepackage[nonatbib]{neurips_2019}
 
-\PassOptionsToPackage{numbers, compress}{natbib}
 \usepackage[utf8]{inputenc} % allow utf-8 input
 \usepackage[T1]{fontenc}    % use 8-bit T1 fonts
 \usepackage{hyperref}       % hyperlinks
@@ -58,7 +58,7 @@
   % \texttt{hippo@cs.cranberry-lemon.edu} \\
   % examples of more authors
   \And
-  Scott Linderman \\
+  Scott W Linderman \\
   Department of Statistics\\
   Stanford University\\
   % \texttt{email} \\
@@ -89,7 +89,7 @@ This paper presents the Poisson-randomized gamma dynamical system (PrGDS), a mod
 
 \section{Introduction}
 
-Political scientists regularly analyze event counts of the number of times country $i$ took action $a$ towards country $j$ during time step $t$ \cite{schrodt1995event}. Such data exhibits ``complex dependence structures'' \cite{king2001proper} like coalitions of countries and bursty temporal dynamics. These dependence structures violate the independence assumptions of traditional regression methods that political scientists have traditionally used to test theories of international relations \cite{green2001dirty,poast2010mis,erikson2014dyadic}. Political scientists have thus advocated for using latent variable models to infer unobserved structure as a way of controlling for it \cite{stewart2014latent}. The latter approach motivates interpretable yet expressive models, capable of capturing a variety of complex latent structures. Event data sets can be represented as a sequence of count tensors $\Yten^{\mathsmaller{(1)}},\dots,\Yten^{\mathsmaller{(T)}}$ each of which contains the $V \ttimes V \ttimes A$ event counts for that time step for every combination of $V$ sender countries, $V$ receivers, and $A$ action types. Recent work applies tensor decomposition methods to event data sets \cite{hoff2004modeling,hoff2015multilinear,schein2015bayesian,hoff2016equivariant,schein2016bayesian}, which infers interpretable coalition structure among countries and topic structure among actions. Like most tensor decomposition methods though, these methods assume that the sequence of tensors is exchangeable and cannot capture the temporal structure in the data.~\looseness=-1  
+Political scientists regularly analyze event counts of the number of times country $i$ took action $a$ towards country $j$ during time step $t$ \cite{schrodt1995event}. Such data exhibits ``complex dependence structures'' \citep{king2001proper} like coalitions of countries and bursty temporal dynamics. These dependence structures violate the independence assumptions of traditional regression methods that political scientists have traditionally used to test theories of international relations \cite{green2001dirty,poast2010mis,erikson2014dyadic}. Political scientists have thus advocated for using latent variable models to infer unobserved structure as a way of controlling for it \cite{stewart2014latent}. The latter approach motivates interpretable yet expressive models, capable of capturing a variety of complex latent structures. Event data sets can be represented as a sequence of count tensors $\Yten^{\mathsmaller{(1)}},\dots,\Yten^{\mathsmaller{(T)}}$ each of which contains the $V \ttimes V \ttimes A$ event counts for that time step for every combination of $V$ sender countries, $V$ receivers, and $A$ action types. Recent work applies tensor decomposition methods to event data sets \cite{hoff2004modeling,hoff2015multilinear,schein2015bayesian,hoff2016equivariant,schein2016bayesian}, which infers interpretable coalition structure among countries and topic structure among actions. Like most tensor decomposition methods though, these methods assume that the sequence of tensors is exchangeable and cannot capture the temporal structure in the data.~\looseness=-1  
 
 % In parallel, work on applying deep recurrent neural networks to event data suggests such methods may be effective at forecasting \cite{trivedi2017know}. There is generally a gap in the literature between flexible models useful for prediction and parsimonious models useful for a range of exploratory and explanatory tasks that arise in scientific practice.
 % 
@@ -335,7 +335,7 @@ The conditionals for $\lambda_k$ and $g_k$ follow from applying the same Poisson
 \label{sec:empirical}
 \begin{figure*}[t]
 \centering
-\subfigure[\footnotesize Matrix empirical studies (originally described by Schein et al.~\cite{schein2016poisson}).]
+\subfigure[\footnotesize Matrix empirical studies (originally described by~\citet{schein2016poisson}).]
 {\label{fig:matrix_results}\includegraphics[width=0.669\linewidth]{../../results/matrices/new_matrix_results.pdf}}\hfill
 % 
 \subfigure[Tensor empirical studies.]
@@ -347,13 +347,13 @@ We've seen how the Poisson--gamma--Poisson motif of the PrGDS (see \cref{sec:rec
 
 \textbf{Setup.} All empirical studies have the following setup: for some data set $\Yten^{\mathsmaller{(1)}},\dots,\Yten^{\mathsmaller{(T)}}$, all of the counts $\Yten^{\mathsmaller{(t)}}$ at randomly selected time steps $t$ are masked. The last two time steps are also always masked. Each model is fit to the masked data using independent chains of MCMC that impute the missing data each at iteration and ultimately return $S$ posterior samples of the latent variables and parameters. The samples are then used to compute the expectations $\mudt$ (as defined in \cref{eq:tensor_likelihood}) of the heldout counts. We distinguish the task of predicting counts in the final time steps when subsequent observed data is unavailable (\emph{forecasting}) from the task of predicting intermediate time steps (\emph{smoothing}). To assess predictive performance we compute log-perplexity as defined---$\log \textrm{Perp}(\Delta) = -\frac{1}{|\Delta|}\sum_{(t,\osubs) \in \Delta} \log \Big[\frac{1}{S}\sum_{s=1}^S \textrm{Pois}\big(\ydt; \musdt \big) \Big]$---where $\Delta$ is the set of multi-indices of the heldout counts and $\musdt$ is the expectation of the heldout count computed from the $s^{\textrm{th}}$ sample. In all studies, we fit a simple non-dynamic baseline---i.e., Bayesian Poisson tensor factorization (BPTF) \cite{schein2015bayesian}---that assumes the data at different time slices are i.i.d.~$y_{\osubs}^{\mathsmaller{(t)}} \tsim \Pois{\mud}$. This model thus fits $\mud$ from training data and predicts it for all heldout time slices. For the dynamic models, we then report their improvement over non-dynamic BPTF by dividing their log-perplexity by BTPF's.~\looseness=-1 
 
-\textbf{Matrices.} We first replicated the empirical studies on $T\ttimes V$ dynamic \emph{matrices} (i.e., 2-mode tensors) reported by Schein et al.~(2016) \cite{schein2016poisson}. These studies followed the setup described above and compared the PGDS to GP-DPFA \cite{acharya2015nonparametric}, a simple dynamic baseline that we describe in \cref{sec:bg}. The matrices in these studies are based on three text corpora---NeurIPS papers~\cite{neuripscorpus}, DBLP abstracts~\cite{dblp}, and State of the Union (SOTU) speeches~\cite{sotu}---where $\yvt$ is the number of times word $v$ occurs in time step $t$, and two international events data sets---GDELT \cite{leetaru2013gdelt} and ICEWS \cite{boscheeicews}---where $\yvt$ is the number of times sender--receiver pair $v$ interacted during time step $t$. We obtained the matrices and random masks along with the original results for both PGDS and GP-DPFA from the authors and ran the PrGDS with the same MCMC settings they describe (see their paper for details \cite{schein2016poisson}) and BTPF (which uses variational inference) on all matrices and masks. We display the results in \cref{fig:matrix_results}.~\looseness=-1
+\textbf{Matrices.} We first replicated the empirical studies on $T\ttimes V$ dynamic \emph{matrices} (i.e., 2-mode tensors) reported by~\citet{schein2016poisson}. These studies followed the setup described above and compared the PGDS to GP-DPFA \cite{acharya2015nonparametric}, a simple dynamic baseline that we describe in \cref{sec:bg}. The matrices in these studies are based on three text corpora---NeurIPS papers~\cite{neuripscorpus}, DBLP abstracts~\cite{dblp}, and State of the Union (SOTU) speeches~\cite{sotu}---where $\yvt$ is the number of times word $v$ occurs in time step $t$, and two international events data sets---GDELT \cite{leetaru2013gdelt} and ICEWS \cite{boscheeicews}---where $\yvt$ is the number of times sender--receiver pair $v$ interacted during time step $t$. We obtained the matrices and random masks along with the original results for both PGDS and GP-DPFA from the authors and ran the PrGDS with the same MCMC settings they describe (see their paper for details \cite{schein2016poisson}) and BTPF (which uses variational inference) on all matrices and masks. We display the results in \cref{fig:matrix_results}.~\looseness=-1
 
 \textbf{Tensors.} We obtained tensor data from two international events data sets---GDELT and ICEWS---wherein a count $y_{\mathsmaller{i \xrightarrow{a}j}}^{\mathsmaller{(t)}}$ is the number of times country $i$ took action $a$ towards country $j$ during time step $t$. These counts form a sequence of 3-mode tensors of size $V \ttimes V \ttimes A$ for $V \teq 249$ countries and $A \teq 20$ actions. For both data sets, we treat months as time steps, where for GDELT we consider the date range 2003--2008 (thus, $T \teq 72$) and for ICEWS we consider 1995--2013 ($T \teq 228$). 
 
-We also obtained neuroscience data of multielectrode recordings of macaque monkey motor cortices from Williams et al.~(2018)~\cite{williams2018unsupervised}. In this data, a count $y^{\mathsmaller{(t)}}_{ij}$ is the number of times neuron $i$ fired in trial $j$ during time step $t$. These counts form a sequence of matrices each of size $N \ttimes S$ where $N \teq 100$ is the number of neurons and $S \teq 1,716$ is the number of trials. We consider each time step to be a 20 millisecond interval which yields $T \teq 162$. 
+We also modeled multi-neuronal spike train recordings of macaque monkey motor cortex collected and studied by~\citet{vyas2018neural} and~\citet{williams2018unsupervised}.  In this data, a count $y^{\mathsmaller{(t)}}_{ij}$ is the number of times neuron $i$ spiked in trial $j$ during time step $t$. These counts form a sequence of matrices each of size $N \ttimes S$ where $N \teq 100$ is the number of neurons and $S \teq 1,716$ is the number of trials. We consider each time step to be a 20 millisecond interval which yields $T \teq 162$. 
 
-For each of the three tensors, we randomly generated two masks that each hold out six time steps in the range $t \in [2, T\tm 2]$ as well as the last two time steps. For each dynamic model, mask, and tensor, we ran two independent chains of $4,000$ MCMC iterations, saving every $100^{\textrm{th}}$ sample after the first 1,000 to compute heldout log-perplexity; we then also fit BPTF and report the relative improvement over it by the dynamic models in \cref{fig:tensor_results}. Following Schein et al.~(2016), we set $K \teq 100$ for all models.~\looseness=-1
+For each of the three tensors, we randomly generated two masks that each hold out six time steps in the range $t \in [2, T\tm 2]$ as well as the last two time steps. For each dynamic model, mask, and tensor, we ran two independent chains of $4,000$ MCMC iterations, saving every $100^{\textrm{th}}$ sample after the first 1,000 to compute heldout log-perplexity; we then also fit BPTF and report the relative improvement over it by the dynamic models in \cref{fig:tensor_results}. Following~\citet{schein2016poisson}, we set $K \teq 100$ for all models.~\looseness=-1
 
 \begin{figure*}[t]
 \centering
@@ -381,7 +381,13 @@ For each of the three tensors, we randomly generated two masks that each hold ou
 We also performed a qualitative comparison of the different models and found that the sparse PrGDS infers sparse bursty latent structure that the other models do not. We provide a qualitative comparison of the structure inferred by both PrGDS variants from macaque cortex data in \cref{fig:macaque}. In \cref{fig:sudan} we visualize two components---a temporally-persistent one (blue) and a bursty one (red)---that the sparse PrGDS inferred from international events data. While both the non-sparse PrGDS and PGDS found a version of the blue component, neither found the red one. We describe in the Appendix how we align the inferred components across models and provide examples of well-aligned components. We found several instances of bursty components inferred by the sparse PrGDS that could not be meaningfully aligned to any component inferred by the other models.~\looseness=-1
 
 
-\vspace{-0.25em}\section{Conclusion}\vspace{-0.5em} A novel modeling motif---Poisson--gamma--Poisson recursions---allows us to construct the Poisson-randomized gamma dynamical system, a tractable and expressive model for sequentially observed count tensors. A variant of the PrGDS permits a truly sparse latent representation that is both qualitatively appealing and provides a natural inductive bias for sparse and bursty count time series.
+\section{Conclusion} A novel modeling motif---Poisson--gamma--Poisson recursions---allows us to construct the Poisson-randomized gamma dynamical system, a tractable and expressive model for sequentially observed count tensors. A variant of the PrGDS permits a truly sparse latent representation that is both qualitatively appealing and provides a natural inductive bias for sparse and bursty count time series.
+
+
+{\small
+  \textbf{Acknowledgments} \;
+  We thank Saurabh Vyas, Dr. Alex Williams, and Prof. Krishna Shenoy for kindly sharing the macaque motor cortex recordings and preprocessing code.  AS was supported by TODO. SWL wa supported by the Simons Collaboration on the Global Brain (SCGB 418011).  MZ was supported by TODO.  DB was supported by TODO.  HW was supported by TODO.
+  }
 
 % \begin{figure*}[t]
 % \centering
@@ -404,15 +410,14 @@ We also performed a qualitative comparison of the different models and found tha
 
 
 
-
 % \section{Discussion}
 % \begin{itemize}
 % \item $\epstheta = 0$ is better as suggested by \cref{eq:expectation}. 
 % \item 
 % \end{itemize}
 % \label{sec:conc}
-\pagebreak
-\bibliographystyle{unsrt}
+
+\bibliographystyle{unsrtnat}
 \bibliography{references}
 
 \end{document}
