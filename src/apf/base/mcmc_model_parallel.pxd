@@ -34,3 +34,12 @@ cdef class MCMCModel(object):
     cdef void _update(self, int n_itns, int verbose, dict schedule)
     cpdef void update(self, int n_itns, int verbose, dict schedule=?)
     cdef void _calc_funcs(self, int n, dict var_funcs, dict out)
+    cpdef void set_total_itns(self, int total_itns)
+
+    # cdef void _test(self,
+    #                 int n_samples,
+    #                 str method,
+    #                 dict var_funcs,
+    #                 dict schedule)
+    # cpdef void geweke(self, int n_samples, dict var_funcs=?, dict schedule=?)
+    # cpdef void schein(self, int n_samples, dict var_funcs=?, dict schedule=?)

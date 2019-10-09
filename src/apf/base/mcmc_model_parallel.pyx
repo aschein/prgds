@@ -70,6 +70,9 @@ cdef class MCMCModel(object):
         def __get__(self):
             return self._total_itns
 
+    cpdef void set_total_itns(self, int total_itns):
+        self._total_itns = total_itns
+
     cdef int _get_thread(self) nogil:
         cdef:
             int tid
@@ -270,7 +273,7 @@ cdef class MCMCModel(object):
                     fwd[key][f] = np.empty(n_samples)
                     rev[key][f] = np.empty(n_samples)
 
-        if method == 'alt_geweke':
+        if method == 'schein':
             for n in range(n_samples):
                 # print('generating state')
                 self._generate_state()
@@ -316,11 +319,11 @@ cdef class MCMCModel(object):
                    var_funcs=var_funcs,
                    schedule=schedule)
 
-    def alt_geweke(self, n_samples, var_funcs={}, schedule={}):
+    def schein(self, n_samples, var_funcs={}, schedule={}):
         """
         Wrapper around _test(...).
         """
         self._test(n_samples=n_samples,
-                   method='alt_geweke',
+                   method='schein',
                    var_funcs=var_funcs,
                    schedule=schedule)

@@ -26,7 +26,6 @@ cdef extern from "gsl/gsl_rng.h" nogil:
 
 
 cdef class APF(MCMCModel):
-    """Basic Poisson factorization"""
 
     def __init__(self, tuple data_shp, tuple core_shp, double eps=0.1, 
                  int binary=0, list mtx_is_dirichlet=[],

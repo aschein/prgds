@@ -16,6 +16,7 @@ from cython.parallel import parallel, prange
 from apf.base.apf cimport APF
 from apf.base.sample cimport _sample_gamma, _sample_dirichlet, _sample_crt, _sample_lnbeta
 from apf.base.cyutils cimport _sum_double_vec, _dot_vec
+from apf.base.mcmc_model_parallel import exit_if
 
 cdef extern from "gsl/gsl_rng.h" nogil:
     ctypedef struct gsl_rng:
@@ -112,17 +113,40 @@ cdef class PGDS(APF):
         return variables
 
     def set_state(self, state):
-        for key, var, _ in self._get_variables():
+        for key, val, _ in self._get_variables():
             if key in state.keys():
-                state_var = state[key]
+                state_val = state[key]
                 if key == 'beta':
-                    self.beta = state_var
+                    self.beta = state_val
                 elif key == 'xi_K':
-                    self.xi_K[:] = state_var
+                    self.xi_K[:] = state_val
                 else:
-                    assert var.shape == state_var.shape
-                    for idx in np.ndindex(var.shape):
-                        var[idx] = state_var[idx]
+                    assert val.shape == state_val.shape
+                    for idx in np.ndindex(val.shape):
+                        val[idx] = state_val[idx]
+        self._compute_mtx_KT()
+        self._update_cache()
+
+    cdef void _initialize_state(self, dict state={}):
+        """
+        Initialize internal state.
+        """
+        for key, val, update_func in self._get_variables():
+            if key in state.keys():
+                state_val = state[key]
+                if key == 'beta':
+                    self.beta = state_val
+                elif key == 'xi_K':
+                    self.xi_K[:] = state_val
+                else:
+                    if np.isscalar(state_val):
+                        assert NotImplementedError
+                    assert val.shape == state_val.shape
+                    for idx in np.ndindex(val.shape):
+                        val[idx] = state_val[idx]
+            else:
+                output = update_func(self, update_mode=self._INITIALIZE_MODE)
+                exit_if(output, 'updating %s' % key)
         self._compute_mtx_KT()
         self._update_cache()
 
@@ -220,7 +244,7 @@ cdef class PGDS(APF):
         This is only called when the model is a Tucker decomposition.
         
         The core elements indexed by a given dimension of the time mode
-        must sum to one. In the CP-decomposition case, there is only one 
+        must sum to one. In the CP-decmoposition case, there is only one 
         core element per class; in this case, the core is stored as only 
         the super-diagonal of the core tensor, and all of those entries 
         are equal to 1.

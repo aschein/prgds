@@ -9,8 +9,34 @@ from Cython.Build import cythonize
 import numpy as np
 from path import Path
 
-if sys.platform == 'darwin':  # if using OSX
-    # replace these lines with path to GCC compiler
+# if sys.platform == 'darwin':
+# 	os.environ['CC'] = 'gcc-8'
+# 	os.environ['CXX'] = 'g++-8'
+
+# include_gsl_dir = '/usr/local/include/'
+# lib_gsl_dir = '/usr/local/lib/'
+
+# EXT_MODULES = [Extension(name=str(x.relpath()).replace('/', '.').split('.pyx')[0],
+# 					     sources=[str(x.relpath())],
+# 						 include_dirs=[np.get_include(),
+# 							           include_gsl_dir,
+# 							           '.'],
+# 						 library_dirs=[lib_gsl_dir],
+# 						 libraries=['gsl'],
+# 						 extra_compile_args=['-fopenmp'],
+# 						 extra_link_args=['-fopenmp'])
+# 			   for x in Path('.').walkfiles('*.pyx')]
+
+# setup(name='apf',
+# 	  version='1.0',
+# 	  description='Allocative Poisson Factorization (APF) framework and examples.',
+# 	  author='Aaron Joseph Steriade Schein',
+# 	  # packages=['base', 'models', 'tests', 'foo'],
+#   	  cmdclass={"build_ext": build_ext},
+#       ext_modules=cythonize(EXT_MODULES,
+#       					    compiler_directives={'language_level':'3'}))  # fails if set to 3
+
+if sys.platform == 'darwin':
     os.environ['CC'] = '/anaconda3/bin/gcc'
     os.environ['CXX'] = '/anaconda3/bin/g++'
 
@@ -78,11 +104,8 @@ pkgs, exts = get_pkgs_and_exts()
 
 setup(name='apf',
       version='1.0',
-      description='Allocation-based Poisson Factorization (APF) models.\
-      Includes basic Poisson tensor factorization (APF),\
-      a tensor version of Poisson--gamma dynamical systems (PGDS)\
-      and Poisson-randomize gamma dynamical systems (PrGDS)',
-      author='Anonymous',
+      description='Allocative Poisson Factorization (APF) framework and examples.',
+      author='Aaron Joseph Steriade Schein',
       packages=pkgs,
       ext_modules=cythonize(exts))
 

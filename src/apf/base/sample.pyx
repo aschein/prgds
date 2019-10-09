@@ -88,3 +88,25 @@ cdef class Sampler:
 
     cpdef int conf_hypergeom(self, int m, double a, double r):
         return _sample_conf_hypergeom(self.rng, m, a, r)
+
+    cpdef double slice_sample_gamma_shape(self,
+                                          double[::1] obs,
+                                          double cons_shp=1.,
+                                          double cons_rte=1.,
+                                          double prior_shp=0.1,
+                                          double prior_rte=0.1,
+                                          double x_init=1.,
+                                          double x_min=1e-300,
+                                          double x_max=1e300,
+                                          int max_iter=1000):
+        
+        return _slice_sample_gamma_shape(self.rng,
+                                         obs,
+                                         cons_shp,
+                                         cons_rte,
+                                         prior_shp,
+                                         prior_rte,
+                                         x_init,
+                                         x_min,
+                                         x_max,
+                                         max_iter)
