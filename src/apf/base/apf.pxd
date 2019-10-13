@@ -7,7 +7,6 @@
 from apf.base.mcmc_model_parallel cimport MCMCModel
 
 cdef class APF(MCMCModel):
-    """Basic Poisson factorization"""
     cdef:
         tuple data_shp, core_shp
         int n_modes, n_classes, n_nonzero, n_missing, impute_after

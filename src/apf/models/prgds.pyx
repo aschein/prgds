@@ -18,6 +18,7 @@ from apf.base.bessel cimport _sample as _sample_bessel
 from apf.base.conf_hypergeom cimport _sample as _sample_conf_hypergeom
 from apf.base.sbch cimport _sample as _sample_sbch
 from apf.base.cyutils cimport _sum_double_vec, _sum_int_vec, _dot_vec
+from apf.base.mcmc_model_parallel import exit_if
 
 cdef extern from "gsl/gsl_rng.h" nogil:
     ctypedef struct gsl_rng:
@@ -127,19 +128,44 @@ cdef class PRGDS(APF):
                 'nu_K': lambda x: x > 1}
 
     def set_state(self, state):
-        for key, var, _ in self._get_variables():
+        for key, val, _ in self._get_variables():
             if key in state.keys():
-                state_var = state[key]
+                state_val = state[key]
                 if key == 'tau':
-                    self.tau = state_var
+                    self.tau = state_val
                 elif key == 'gam':
-                    self.gam = state_var
+                    self.gam = state_val
                 elif key == 'beta':
-                    self.beta = state_var
+                    self.beta = state_val
                 else:
-                    assert var.shape == state_var.shape
-                    for idx in np.ndindex(var.shape):
-                        var[idx] = state_var[idx]
+                    assert val.shape == state_val.shape
+                    for idx in np.ndindex(val.shape):
+                        val[idx] = state_val[idx]
+        self._compute_mtx_KT()
+        self._update_cache()
+
+    cdef void _initialize_state(self, dict state={}):
+        """
+        Initialize internal state.
+        """
+        for key, val, update_func in self._get_variables():
+            if key in state.keys():
+                state_val = state[key]
+                if key == 'tau':
+                    self.tau = state_val
+                elif key == 'gam':
+                    self.gam = state_val
+                elif key == 'beta':
+                    self.beta = state_val
+                else:
+                    if np.isscalar(state_val):
+                        assert NotImplementedError
+                    assert val.shape == state_val.shape
+                    for idx in np.ndindex(val.shape):
+                        val[idx] = state_val[idx]
+            else:
+                output = update_func(self, update_mode=self._INITIALIZE_MODE)
+                exit_if(output, 'updating %s' % key)
         self._compute_mtx_KT()
         self._update_cache()
 

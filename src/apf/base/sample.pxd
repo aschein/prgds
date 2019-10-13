@@ -513,6 +513,79 @@ cdef inline double _lp_gamma_shape(double x,
     lp -= gsl_sf_lngamma(x * cons_shp)
     return lp
 
+cdef inline double _slice_sample_gamma_shape(gsl_rng * rng,
+                                             double[::1] obs,
+                                             double cons_shp,
+                                             double cons_rte,
+                                             double prior_shp,
+                                             double prior_rte,
+                                             double x_init,
+                                             double x_min,
+                                             double x_max,
+                                             int max_iter) nogil:
+    """
+    Slice sample x assuming the following generative model:
+
+        x ~ Gamma(prior_shp, prior_rte)
+        y_k ~ Gamma(cons_shp * x, cons_rte), k = 1...K
+
+    where y_1,...,y_K constitute the observation array.
+
+    Arguments:
+        obs -- Array of observations
+        cons_shp -- Constant multiplied by x in shape param for obs
+        cons_rte -- Constant rate param for obs
+        prior_shp -- Prior shape param for x
+        prior_rte -- Prior rate param for x
+        x_init -- Current value of parameter to be slice-sampled.
+        x_min -- Min allowable value of x
+        x_max -- Max allowable value of x
+        max_iter -- Max number of iterations before terminating.
+    """
+    cdef:
+        np.npy_intp K, k, _
+        double sum_obs, prior_sca, cons_sca, z_init, z, diff, x, new_z
+
+    K = obs.shape[0]
+    
+    sum_obs = 0
+    for k in range(K):
+        sum_obs += obs[k]
+
+    prior_sca = 1./prior_rte
+    cons_sca = 1./cons_rte
+
+    z_init = log(gsl_ran_gamma_pdf(x_init, prior_shp, prior_sca)) + \
+             log(gsl_ran_gamma_pdf(sum_obs, x_init * cons_shp * K, cons_sca))
+
+    # z_init = _lp_gamma_shape(x_init, sum_obs, cons_shp, cons_rte, prior_shp, prior_rte)
+
+    z = z_init - gsl_ran_exponential(rng, 1.)
+    for _ in range(max_iter):
+        diff = x_max - x_min
+        if diff < 0:
+            return x_min - 1
+
+        x = gsl_rng_uniform(rng) * diff + x_min
+
+        new_z = log(gsl_ran_gamma_pdf(x, prior_shp, prior_sca)) + \
+                log(gsl_ran_gamma_pdf(sum_obs, x * cons_shp * K, cons_sca))
+
+        # new_z = _lp_gamma_shape(x, sum_obs, cons_shp, cons_rte, prior_shp, prior_rte)
+
+        if new_z >= z:
+            return x
+
+        elif diff == 0:
+            return x_min - 1
+
+        if x < x_init:
+            x_min = x
+        else:
+            x_max = x
+
+    return x
+
 cdef class Sampler:
     """
     Wrapper for a gsl_rng object that exposes all sampling methods to Python.
@@ -544,3 +617,13 @@ cdef class Sampler:
     cpdef int bessel(self, double v, double a)
     cpdef int sbch(self, int m, double r)
     cpdef int conf_hypergeom(self, int m, double a, double r)
+    cpdef double slice_sample_gamma_shape(self,
+                                          double[::1] obs,
+                                          double cons_shp=?,
+                                          double cons_rte=?,
+                                          double prior_shp=?,
+                                          double prior_rte=?,
+                                          double x_init=?,
+                                          double x_min=?,
+                                          double x_max=?,
+                                          int max_iter=?)
