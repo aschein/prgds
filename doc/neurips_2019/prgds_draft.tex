@@ -273,7 +273,7 @@ The Poisson prior over $h$ is not conjugate to the gamma; however, despite this,
 \label{eq:bessel}
 \compcond{h} &\sim \textrm{Bes}\big(\epstheta \tm 1,\, 2\sqrt{\theta \,c_2\, c_1}\big).
 \end{align}
-The Bessel distribution can be sampled efficiently \cite{devroye2002simulating}; our Cython implementation is available online.\footnote{\url{TODO}}
+The Bessel distribution can be sampled efficiently \cite{devroye2002simulating}; our Cython implementation is available online.\footnote{\url{https://github.com/aschein/prgds}}_
 Provided that $\epstheta \!>\! 0$, sampling $\theta$ and $h$ iteratively from \cref{eq:gamma,eq:bessel} constitutes a valid Markov chain for posterior inference. When $\epstheta \teq 0$, though, $\theta \stackrel{\textrm{a.s.}}{=} 0$ if $h \teq 0$, and vice versa. As a result, this Markov chain has an absorbing condition at $h \teq 0$ and violates detailed balance. In this case, we must therefore sample $h$ with $\theta$ marginalized out. Toward that end, we prove Theorem 1.~\looseness=-1
 
 \textbf{Theorem 1:} \textit{The incomplete conditional $P(h\given{\epstheta \teq 0, -\backslash} \theta)\triangleq \int P(h,\theta\given \epstheta \teq 0, -)\,\mathbf{d}\theta$ is}~\looseness=-1
@@ -408,7 +408,7 @@ depict example components in \cref{fig:exploratory}.
 
 {\small
   \textbf{Acknowledgments} \;
-  We thank Saurabh Vyas, Alex Williams, and Krishna Shenoy for kindly sharing the macaque monkey motor cortex data set and their preprocessing code.  AS was supported by TODO. SWL was supported by the Simons Collaboration on the Global Brain (SCGB 418011).  Mingyuan Zhou acknowledges the support of Award IIS-1812699 from the U.S. National Science Foundation.  DB was supported by TODO.}
+  We thank Saurabh Vyas, Alex Williams, and Krishna Shenoy for kindly sharing the macaque monkey motor cortex data set and their preprocessing code.  AS was supported by TODO. SWL was supported by the Simons Collaboration on the Global Brain (SCGB 418011). Mingyuan Zhou acknowledges the support of Award IIS-1812699 from the U.S. National Science Foundation. David M. Blei is supported by ONR N00014-17-1-2131, ONR N00014-15-1-2209, NIH 1U01MH115727-01, NSF CCF-1740833, DARPA SD2 FA8750-18-C-0130, IBM, 2Sigma, Amazon, NVIDIA, and the Simons Foundation.}
 
 % \begin{figure*}[t]
 % \centering
