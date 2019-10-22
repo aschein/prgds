@@ -1,7 +1,7 @@
 # Poisson-Randomized Gamma Dynamical Systems
 Source code for the paper: Poisson-Randomized Gamma Dynamical Systems (NeurIPS 2019) by Aaron Schein, Scott Linderman, Mingyuan Zhou, David Blei, and Hanna Wallach.
 
-The MIT License (MIT)
+MIT License
 
 Copyright (c) 2019 Aaron Schein
 
