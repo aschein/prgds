@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-# prgds
-Poisson-randomized gamma dynamical systems
-=======
 # Poisson-Randomized Gamma Dynamical Systems
 Source code for the paper: Poisson-Randomized Gamma Dynamical Systems (NeurIPS 2019) by Aaron Schein, Scott Linderman, Mingyuan Zhou, David Blei, and Hanna Wallach.
 
@@ -26,7 +22,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
->>>>>>> fa68f806124549c7963eab3b1cda452c300f994d
 
 ## What's included in src:
 
