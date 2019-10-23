@@ -1,0 +1,112 @@
+
+% Throughout
+\newcommand{\given}{\,|\,}
+\newcommand{\compcond}[1]{\big(#1\given-\big)}
+\newcommand{\tapprox}{\!\approx\!}
+\newcommand{\tequiv}{\!\equiv\!}
+\newcommand{\teq}{\!=\!}
+\newcommand{\tp}{\!+\!}
+\newcommand{\tm}{\!-\!}
+\newcommand{\tsim}{\!\sim\!}
+\newcommand{\ttimes}{\!\times\!}
+\newcommand{\tin}{\!\in\!}
+\newcommand{\bcdot}{\boldsymbol{\cdot}}
+
+\newcommand{\Eq}[1]{\mathbb{E}_Q\left[#1\right]}
+\newcommand{\Vq}[1]{\mathbb{V}_Q\left[#1\right]}
+\newcommand{\Gq}[1]{\mathbb{G}_Q\left[#1\right]}
+\newcommand{\E}[1]{\mathbb{E}\left[#1\right]}
+\newcommand{\V}[1]{\mathbb{V}\left[#1\right]}
+\newcommand{\G}[1]{\mathbb{G}\left[#1\right]}
+\newcommand{\Gqnot}[2]{\mathbb{G}_{Q_{\backslash #1}}\left[#2\right]}
+\newcommand{\Eqnot}[2]{\mathbb{E}_{Q_{\backslash #1}}\left[#2\right]}
+
+% Commands for sampling
+\newcommand{\Pois}[1]{\textrm{Pois}\left( #1 \right)}
+\newcommand{\Bess}[1]{\textrm{Bessel}\left( #1 \right)}
+\newcommand{\Binom}[1]{\textrm{Binom}\left( #1 \right)}
+\newcommand{\Gam}[1]{\textrm{Gam}\left( #1 \right)}
+\newcommand{\Multi}[1]{\textrm{Multinom}\left( #1 \right)}
+\newcommand{\Dirac}[1]{\mathbb{1}\left[ #1 \right]}
+
+% APF
+\newcommand{\Yten}{\boldsymbol{Y}}
+\newcommand{\osub}{\textrm{i}}
+\newcommand{\osubs}{\textbf{\osub}}
+\newcommand{\lsubs}{\boldsymbol{\kappa}}
+\newcommand{\wsu}[2]{#1_{\subs #2}}
+\newcommand{\wsup}[2]{#1_{\subs}^{(#2)}}
+
+
+\newcommand{\yd}{y_{\osubs}}
+\newcommand{\ydk}{y_{\osubs k}}
+\newcommand{\ydtk}{y_{\osubs k}^{\mathsmaller{(t)}}}
+\newcommand{\mud}{\mu_{\osubs}}
+\newcommand{\mudt}{\mu_{\osubs}^{\mathsmaller{(t)}}}
+\newcommand{\musdt}{\mu_{\osubs, s}^{\mathsmaller{(t)}}}
+\newcommand{\mudk}{\mu_{\osubs \lsubs}}
+\newcommand{\kappas}{\boldsymbol{\kappa} \in \mathcal{K}}
+\newcommand{\sumkappa}{\sum_{\kappas}}
+
+
+\newcommand{\mask}{b}
+\newcommand{\maskten}{\boldsymbol{B}}
+\newcommand{\maskd}{\mask_{\osubs}}
+
+\newcommand{\ija}{i {\xrightarrow{a}} j}
+\newcommand{\yija}{y_{\ija}}
+\newcommand{\maskija}{\mask_{\ija}}
+
+% FROM PrGDS
+\newcommand{\ydt}{y^{\mathsmaller{(t)}}_{\osubs}}
+\newcommand{\rhot}{\rho^{\mathsmaller{(t)}}}
+\newcommand{\thetakt}{\theta_{k}^{\mathsmaller{(t)}}}
+\newcommand{\thetakttm}{\theta_{k_2}^{\mathsmaller{(t\!-\!1)}}}
+\newcommand{\phikv}{\phi_{kv}}
+\newcommand{\epstheta}{\epsilon_0^{\mathsmaller{(\theta)}}}
+\newcommand{\epslambda}{\epsilon_0^{\mathsmaller{(\lambda)}}}
+
+
+\newcommand{\mkt}{m^{\mathsmaller{(t)}}_{k}}
+\newcommand{\ykt}{y^{\mathsmaller{(t)}}_{k}}
+\newcommand{\yvt}{y^{\mathsmaller{(t)}}_{v}}
+\newcommand{\yvtk}{y^{\mathsmaller{(t)}}_{vk}}
+\newcommand{\yitk}{y^{\mathsmaller{(t)}}_{\mathbf{v}k}}
+\newcommand{\yit}{y^{\mathsmaller{(t)}}_{\mathbf{v}}}
+\newcommand{\muitk}{\mu^{\mathsmaller{(t)}}_{\mathbf{v}k}}
+\newcommand{\pitk}{p^{\mathsmaller{(t)}}_{\mathbf{v}k}}
+\newcommand{\textr}{\textrm{r}}
+\newcommand{\thetalam}{\sum_{k_2=1}^K \lambda_{kk_2} \theta_{k_2}^{\mathsmaller{(t{-}1)}}}
+\newcommand{\thetapi}{\sum_{k_2=1}^K \pi_{kk_2} \theta_{k_2}^{\mathsmaller{(t{-}1)}}}
+
+\newcommand{\omegakt}{\omega_{k}^{\mathsmaller{(t)}}}
+\newcommand{\zetakt}{\zeta_{k}^{\mathsmaller{(t)}}}
+\newcommand{\zetaktp}{\zeta_{k}^{(t \tp 1)}}
+\newcommand{\deltat}{\delta^{\mathsmaller{(t)}}}
+\newcommand{\alphakt}{\alpha_{k}^{\mathsmaller{(t)}}}
+\newcommand{\betakt}{\beta_{k}^{\mathsmaller{(t)}}}
+\newcommand{\thetaktm}{\theta_{k}^{\mathsmaller{(t\!-\!1)}}}
+\newcommand{\thetaktp}{\theta_{k}^{\mathsmaller{(t\!+\!1)}}}
+\newcommand{\hkt}{h_k^{\mathsmaller{(t)}}}
+\newcommand{\hdkt}{h_{\boldsymbol{\cdot} k}^{\mathsmaller{(t)}}}
+\newcommand{\hkdt}{h_{k \boldsymbol{\cdot}}^{\mathsmaller{(t)}}}
+\newcommand{\hktm}{h_{k}^{\mathsmaller{(t\!-\!1)}}}
+\newcommand{\hktp}{h_{k}^{\mathsmaller{(t\!+\!1)}}}
+\newcommand{\hdktp}{h_{\boldsymbol{\cdot} k}^{\mathsmaller{(t\!+\!1)}}}
+\newcommand{\hkdtp}{h_{k \boldsymbol{\cdot}}^{\mathsmaller{(t\!+\!1)}}}
+\newcommand{\hkkt}{h_{kk_2}^{\mathsmaller{(t)}}}
+\newcommand{\phimki}{\phi_{k\osub_m}^{\mathsmaller{(m)}}}
+\newcommand{\alphamki}{\alpha_{ki_m}^{(m)}}
+\newcommand{\betamki}{\beta_{ki_m}^{(m)}}
+\newcommand{\tildethetakt}{\tilde{\boldsymbol{\theta}}_{k}^{\mathsmaller{(t)}}}
+\newcommand{\tildethetaktm}{\tilde{\boldsymbol{\theta}}_{k}^{(t\tm1)}}
+\newcommand{\cm}{c^{(m)}}
+\newcommand{\ez}{\epsilon_0}
+\newcommand{\lkt}{l_k^{\mathsmaller{(t)}}}
+\newcommand{\hypconf}[1]{{}_1\textrm{F}_1\left( #1 \right)}
+
+
+% \newcommand{\prodbeta}{\big(\hspace{-0.25em}\prod_{j \in \mathcal{R}_d}\hspace{-0.25em}\beta_{kj}\big)}
+% \newcommand{\prodbetanj}{\big(\hspace{-0.25em}\prod_{j' \in \mathcal{R}_d}\hspace{-0.25em}\beta_{kj'}\big)}
+% \newcommand{\lnphi}{\ln(1+\phi_{kv}\,\xi^{-1})}
+% \newcommand{\omegarate}{\omega^{(\tau_d)}_{s_d \xrightarrow{k} \mathcal{R}_d}}
