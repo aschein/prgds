@@ -75,7 +75,7 @@ def main():
     if len(mtx_is_dirichlet) > 0:
         var_funcs['mtx_MKD'] = entropy_funcs
 
-    model.alt_geweke(5000, var_funcs=var_funcs, schedule=schedule)
+    model.schein(5000, var_funcs=var_funcs, schedule=schedule)
 
 
 if __name__ == '__main__':

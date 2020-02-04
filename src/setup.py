@@ -36,9 +36,9 @@ from path import Path
 #       ext_modules=cythonize(EXT_MODULES,
 #       					    compiler_directives={'language_level':'3'}))  # fails if set to 3
 
-if sys.platform == 'darwin':
-    os.environ['CC'] = '/anaconda3/bin/gcc'
-    os.environ['CXX'] = '/anaconda3/bin/g++'
+# if sys.platform == 'darwin':
+#     os.environ['CC'] = '/anaconda3/bin/gcc'
+#     os.environ['CXX'] = '/anaconda3/bin/g++'
 
 include_gsl_dir = '/usr/local/include/'
 lib_gsl_dir = '/usr/local/lib/'
