@@ -319,11 +319,11 @@ cdef class MCMCModel(object):
                    var_funcs=var_funcs,
                    schedule=schedule)
 
-    def schein(self, n_samples, var_funcs={}, schedule={}):
+    def alt_geweke(self, n_samples, var_funcs={}, schedule={}):
         """
         Wrapper around _test(...).
         """
         self._test(n_samples=n_samples,
-                   method='schein',
+                   method='alt_geweke',
                    var_funcs=var_funcs,
                    schedule=schedule)

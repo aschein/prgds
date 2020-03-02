@@ -107,7 +107,7 @@ def main():
         var_funcs['delta_T'] = {'delta': lambda x: x[0]}
         var_funcs['b_T'] = {'b': lambda x: x[0]}
 
-    model.schein(20000, var_funcs=var_funcs, schedule=schedule)
+    model.alt_geweke(20000, var_funcs=var_funcs, schedule=schedule)
 
 
 if __name__ == '__main__':

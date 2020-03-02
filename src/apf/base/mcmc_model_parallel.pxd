@@ -42,4 +42,4 @@ cdef class MCMCModel(object):
     #                 dict var_funcs,
     #                 dict schedule)
     # cpdef void geweke(self, int n_samples, dict var_funcs=?, dict schedule=?)
-    # cpdef void schein(self, int n_samples, dict var_funcs=?, dict schedule=?)
+    # cpdef void alt_geweke(self, int n_samples, dict var_funcs=?, dict schedule=?)
