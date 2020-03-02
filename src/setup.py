@@ -9,36 +9,10 @@ from Cython.Build import cythonize
 import numpy as np
 from path import Path
 
-# if sys.platform == 'darwin':
-# 	os.environ['CC'] = 'gcc-8'
-# 	os.environ['CXX'] = 'g++-8'
-
-# include_gsl_dir = '/usr/local/include/'
-# lib_gsl_dir = '/usr/local/lib/'
-
-# EXT_MODULES = [Extension(name=str(x.relpath()).replace('/', '.').split('.pyx')[0],
-# 					     sources=[str(x.relpath())],
-# 						 include_dirs=[np.get_include(),
-# 							           include_gsl_dir,
-# 							           '.'],
-# 						 library_dirs=[lib_gsl_dir],
-# 						 libraries=['gsl'],
-# 						 extra_compile_args=['-fopenmp'],
-# 						 extra_link_args=['-fopenmp'])
-# 			   for x in Path('.').walkfiles('*.pyx')]
-
-# setup(name='apf',
-# 	  version='1.0',
-# 	  description='Allocative Poisson Factorization (APF) framework and examples.',
-# 	  author='Aaron Joseph Steriade Schein',
-# 	  # packages=['base', 'models', 'tests', 'foo'],
-#   	  cmdclass={"build_ext": build_ext},
-#       ext_modules=cythonize(EXT_MODULES,
-#       					    compiler_directives={'language_level':'3'}))  # fails if set to 3
 
 if sys.platform == 'darwin':
-    os.environ['CC'] = '/anaconda3/bin/gcc'
-    os.environ['CXX'] = '/anaconda3/bin/g++'
+    os.environ['CC'] = '/Users/aaronschein/opt/anaconda3/bin/gcc'
+    os.environ['CXX'] = '/Users/aaronschein/opt/anaconda3/bin/g++'
 
 include_gsl_dir = '/usr/local/include/'
 lib_gsl_dir = '/usr/local/lib/'
