@@ -273,7 +273,7 @@ cdef class MCMCModel(object):
                     fwd[key][f] = np.empty(n_samples)
                     rev[key][f] = np.empty(n_samples)
 
-        if method == 'schein':
+        if method == 'alt_geweke':
             for n in range(n_samples):
                 # print('generating state')
                 self._generate_state()
