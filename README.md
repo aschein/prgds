@@ -9,7 +9,7 @@ Poisson-randomized gamma dynamical systems
 * [pgds.pyx](src/apf/models/pgds.pyx): Tensor generalization of Poisson--gamma dynamical systems (PGDS) of Schein et al. (2016).
 * [prgds.pyx](src/apf/models/prgds.pyx): Poisson-randomized gamma dynamical systems (PRGDS).
 * [bpmf.pyx](src/apf/models/bpmf.pyx): Bayesian Poisson matrix factorization (BPMF).
-* [example.ipynb](src/notebooks/example.ipynb): Example using BPMF for count or matrix factorization.
+* [bpmf_example.ipynb](src/notebooks/bpmf_example.ipynb): Example using BPMF for count or matrix factorization.
 
 ## Dependencies:
 * [cython](https://cython.org/)
