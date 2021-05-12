@@ -7,7 +7,8 @@ Poisson-randomized gamma dynamical systems
 * [bessel.pyx](src/apf/base/bessel.pyx): Sampling algorithms for the Bessel distribution.
 * [sbch.pyx](src/apf/base/sbch.pyx): Sampling algorithms for the size-biased confluent hypergeometric (SCH) distribution.
 * [pgds.pyx](src/apf/models/pgds.pyx): Tensor generalization of Poisson--gamma dynamical systems (PGDS) of Schein et al. (2016).
-* [prgds.pyx](src/apf/models/prgds.pyx): Poisson-randomized gamma dynamical systems (PrGDS).
+* [prgds.pyx](src/apf/models/prgds.pyx): Poisson-randomized gamma dynamical systems (PRGDS).
+* [bpmf.pyx](src/apf/models/bpmf.pyx): Bayesian Poisson matrix factorization (BPMF).
 
 ## Dependencies:
 * [cython](https://cython.org/)
@@ -28,3 +29,5 @@ OSX users will also have to install the [GNU Scientific library (GSL)](https://w
 ```
 conda install -c conda-forge gsl
 ```
+
+OSX users with problems compiling may find answers to [this question](https://stackoverflow.com/questions/54776301/cython-prange-is-repeating-not-parallelizing) useful.
