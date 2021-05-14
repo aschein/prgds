@@ -1,4 +1,4 @@
-name: meth
+name: prgds
 channels:
   - anaconda
   - conda-forge
