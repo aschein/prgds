@@ -212,12 +212,9 @@ cdef class APF(MCMCModel):
         mtxs = list(self.get_matrices(transpose=True))
         if self.is_tucker:
             core = np.reshape(self.core_Q, self.core_shp)
-            out =  tl.tucker_to_tensor(core, mtxs)[subs]
+            return tl.tucker_to_tensor(core, mtxs)[subs]
         else:
-            out =  tl.kruskal_to_tensor(mtxs, weights=self.core_Q)[subs]
-        if self.binary:
-            out = -np.expm1(-out)
-        return out
+            return tl.kruskal_to_tensor(mtxs, weights=self.core_Q)[subs]
 
     def decode(self, mtx, mode, subs=()):
         mtxs = list(self.get_matrices(transpose=True))
