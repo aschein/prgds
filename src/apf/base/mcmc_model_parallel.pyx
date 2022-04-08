@@ -273,7 +273,7 @@ cdef class MCMCModel(object):
                     fwd[key][f] = np.empty(n_samples)
                     rev[key][f] = np.empty(n_samples)
 
-        if method == 'schein':
+        if method == 'alt_geweke':
             for n in range(n_samples):
                 # print('generating state')
                 self._generate_state()
@@ -319,11 +319,11 @@ cdef class MCMCModel(object):
                    var_funcs=var_funcs,
                    schedule=schedule)
 
-    def schein(self, n_samples, var_funcs={}, schedule={}):
+    def alt_geweke(self, n_samples, var_funcs={}, schedule={}):
         """
         Wrapper around _test(...).
         """
         self._test(n_samples=n_samples,
-                   method='schein',
+                   method='alt_geweke',
                    var_funcs=var_funcs,
                    schedule=schedule)

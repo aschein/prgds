@@ -1,27 +1,20 @@
-# Poisson-Randomized Gamma Dynamical Systems
-Source code for the paper: Poisson-Randomized Gamma Dynamical Systems (NeurIPS 2019) by Aaron Schein, Scott Linderman, Mingyuan Zhou, David Blei, and Hanna Wallach.
+# prgds
+Poisson-randomized gamma dynamical systems
 
-MIT License
-
-Copyright (c) 2019 Aaron Schein
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+## Installing
+An Anaconda environment is included at [environment.yml](environment.yml). Run the following command in the home directory to create an Anaconda environment with all necessary packages and configurations:
+```
+conda env create -f environment.yml
+```
+This will create an environment called `pgds`. To acivate it, type:
+```
+conda activate prgds
+```
+Then you should be able to compile the code by changing directory to the src/ folder and typing
+```
+cd src/
+make
+```
 
 ## What's included in src:
 
@@ -29,7 +22,9 @@ SOFTWARE.
 * [bessel.pyx](src/apf/base/bessel.pyx): Sampling algorithms for the Bessel distribution.
 * [sbch.pyx](src/apf/base/sbch.pyx): Sampling algorithms for the size-biased confluent hypergeometric (SCH) distribution.
 * [pgds.pyx](src/apf/models/pgds.pyx): Tensor generalization of Poisson--gamma dynamical systems (PGDS) of Schein et al. (2016).
-* [prgds.pyx](src/apf/models/prgds.pyx): Poisson-randomized gamma dynamical systems (PrGDS).
+* [prgds.pyx](src/apf/models/prgds.pyx): Poisson-randomized gamma dynamical systems (PRGDS).
+* [bpmf.pyx](src/apf/models/bpmf.pyx): Bayesian Poisson matrix factorization (BPMF).
+* [bpmf_example.ipynb](src/notebooks/bpmf_example.ipynb): Example using BPMF for count or matrix factorization.
 
 ## Dependencies:
 * [cython](https://cython.org/)
@@ -50,3 +45,5 @@ OSX users will also have to install the [GNU Scientific library (GSL)](https://w
 ```
 conda install -c conda-forge gsl
 ```
+
+OSX users with problems compiling may find answers to [this question](https://stackoverflow.com/questions/54776301/cython-prange-is-repeating-not-parallelizing) useful.
