@@ -1,6 +1,21 @@
 # prgds
 Poisson-randomized gamma dynamical systems
 
+## Installing
+An Anaconda environment is included at [environment.yml](environment.yml). Run the following command in the home directory to create an Anaconda environment with all necessary packages and configurations:
+```
+conda env create -f environment.yml
+```
+This will create an environment called `pgds`. To acivate it, type:
+```
+conda activate prgds
+```
+Then you should be able to compile the code by changing directory to the src/ folder and typing
+```
+cd src/
+make
+```
+
 ## What's included in src:
 
 * [apf.pyx](src/apf/base/apf.pyx): Allocation-based Poisson factorization (APF). This is the base class for Poisson tensor decomposition models with non-negative priors.
