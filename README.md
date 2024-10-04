@@ -6,7 +6,7 @@ An Anaconda environment is included at [environment.yml](environment.yml). Run t
 ```
 conda env create -f environment.yml
 ```
-This will create an environment called `pgds`. To acivate it, type:
+This will create an environment called `prgds`. To activate it, type:
 ```
 conda activate prgds
 ```
